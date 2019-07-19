@@ -1,0 +1,21 @@
+.zone {
+    display: flex;
+    flex-direction: column;
+
+    .zone-header {
+        display:flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        border-bottom: 1px dashed #333;
+        padding: 15px;
+
+        .add-task {
+            cursor: pointer;
+            background-color: #616161;
+            margin-top: 10px;
+            &:hover {
+                color: #18c718;
+            }
+        }
+    }
+}

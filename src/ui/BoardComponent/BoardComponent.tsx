@@ -10,12 +10,12 @@ import { Board, Task } from '../../model'
 import React, { Component } from 'react'
 
 import { Card } from '../Card/Card'
+import { ContentConsumer } from '../AppContext/AppProvider'
 
 interface Props {
     readonly board: Board
+
     readonly toggleAddCardModalWindow: (showAddCardModalWindow: boolean, boardId?: string) => void
-    readonly deleteCard: (zoneId: string, cardId: number) => void
-    readonly updateDraggedCard: (zoneId: string, card: Task) => void
     readonly setTasks: (zoneOverId: string) => void
     readonly saveTasks: (zoneId: string) => void
 }
@@ -34,7 +34,7 @@ export class BoardComponent extends Component<Props, State> {
         saveTasks(zoneId)
     }
     public render() {
-        const { board, toggleAddCardModalWindow, deleteCard, updateDraggedCard } = this.props
+        const { board, toggleAddCardModalWindow } = this.props
         return (
             <>
                 <div className="zone" key={board.id}>
@@ -56,15 +56,21 @@ export class BoardComponent extends Component<Props, State> {
                         onDragOver={e => this.onDragOver(e, board.id)}
                         onDrop={e => this.onDrop(e, board.id)}
                     >
-                        {board.tasks.map(task => (
-                            <Card
-                                key={task.id}
-                                zoneId={board.id}
-                                task={task}
-                                deleteCard={deleteCard}
-                                updateDraggedCard={updateDraggedCard}
-                            />
-                        ))}
+                        <ContentConsumer>
+                            {({ deleteCard, updateDraggedCard }) => (
+                                <>
+                                    {board.tasks.map(task => (
+                                        <Card
+                                            key={task.id}
+                                            zoneId={board.id}
+                                            task={task}
+                                            deleteCard={deleteCard}
+                                            updateDraggedCard={updateDraggedCard}
+                                        />
+                                    ))}
+                                </>
+                            )}
+                        </ContentConsumer>
                     </div>
                 </div>
             </>

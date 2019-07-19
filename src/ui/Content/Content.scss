@@ -1,33 +1,11 @@
 .content {
     display:flex;
     font-family: 'Roboto';
-
-    .zone {
-        display: flex;
-        flex-direction: column;
-
-        .zone-header {
-            display:flex;
-            flex-direction: column;
-            margin-bottom: 10px;
-            border-bottom: 1px dashed #333;
-            padding: 15px;
-
-            .add-task {
-                cursor: pointer;
-                background-color: #616161;
-                margin-top: 10px;
-                &:hover {
-                    color: #18c718;
-                }
-            }
-        }
-    }
 }
 
 .droppable {
   width: 200px;
-  height: 400px;
+  min-height: 400px;
   border: 1px solid black;
   margin: 5px;
 }
@@ -51,6 +29,7 @@ label {
     outline: none;
     padding: 4px;
     border-radius: 2px;
+    font-size: 14px;
 }
 
 .button-basic {

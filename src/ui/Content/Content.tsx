@@ -44,17 +44,15 @@ export class Content extends Component<Props, State> {
             <>
                 <div className="content">
                     <ContentConsumer>
-                        {({ deleteCard, boards, setTasks, saveTasks, updateDraggedCard }) => (
+                        {({ boards, setTasks, saveTasks }) => (
                             <>
                                 {boards.map(board => (
                                     <BoardComponent
                                         key={board.id}
                                         board={board}
                                         toggleAddCardModalWindow={this.toggleAddCardModalWindow}
-                                        deleteCard={deleteCard}
                                         setTasks={setTasks}
                                         saveTasks={saveTasks}
-                                        updateDraggedCard={updateDraggedCard}
                                     />
                                 ))}
                             </>

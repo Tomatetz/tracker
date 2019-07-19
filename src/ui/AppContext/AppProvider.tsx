@@ -27,6 +27,9 @@ const initialState = {
     updateDraggedCard: (zoneId: string, card: Task) => {
         return { zoneId, card }
     },
+    updateEditedCard: (zoneId: string, card: Task) => {
+        return { zoneId, card }
+    },
     boards: [] as Board[],
     draggedCard: {
         card: {} as Task,
@@ -46,6 +49,7 @@ export class ContentProvider extends Component<Props, State> {
             addCard: this.addCard,
             saveTasks: this.saveTasks,
             updateDraggedCard: this.updateDraggedCard,
+            updateEditedCard: this.updateEditedCard,
         }
     }
     public componentDidMount() {
@@ -63,7 +67,6 @@ export class ContentProvider extends Component<Props, State> {
                     }
                 })
                 this.setState({ boards })
-                // console.log(boards)
             })
     }
     private setTasks = (zoneOverId: string) => {
@@ -119,7 +122,7 @@ export class ContentProvider extends Component<Props, State> {
         const zoneDropFrom = JSON.parse(JSON.stringify(boards)).filter(
             (board: Board) => board.id === zoneDropFromId,
         )[0]
-        console.log(zoneDropFrom.tasks, zoneDropTo.tasks)
+
         const batch = firebase.firestore().collection('tasks')
         batch
             .doc(zoneDropFromId)
@@ -130,6 +133,11 @@ export class ContentProvider extends Component<Props, State> {
     }
     private updateDraggedCard = (zoneId: string, card: Task) => {
         this.setState({ draggedCard: { zoneId, card } })
+        return { zoneId, card }
+    }
+    private updateEditedCard = (zoneId: string, card: Task) => {
+
+        
         return { zoneId, card }
     }
     public render() {
