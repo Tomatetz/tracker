@@ -1,0 +1,33 @@
+.card {
+    margin: 5px;
+    background-color: white;
+    color: black;
+    padding: 10px;
+
+    .card-header {
+        display: flex;
+        flex-direction: column;
+
+        .card-header__navigation {
+            display: flex;
+            flex-direction: row-reverse;
+
+            .delete-card {
+                font-size: 20px;
+                cursor: pointer;
+                padding: 5px;
+
+                &:hover {
+                    color: #ce1313;
+                }
+            }
+        }
+    }
+
+    .card-body {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #333;
+        font-size: 14px;
+    }
+}
