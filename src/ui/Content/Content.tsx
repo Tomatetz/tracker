@@ -15,7 +15,7 @@ import { ModalComponent } from '../ModalWindow'
 import { Task } from '../../model'
 
 interface Props {
-    readonly addCard: (zoneId: string, card: Task) => void
+    readonly addCard: (boardId: string, card: Task) => void
 }
 type State = {
     showAddCardModalWindow: boolean

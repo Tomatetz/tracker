@@ -6,9 +6,9 @@
 
 import './BoardComponent.scss'
 
-import { Board, Task } from '../../model'
 import React, { Component } from 'react'
 
+import { Board } from '../../model'
 import { Card } from '../Card/Card'
 import { ContentConsumer } from '../AppContext/AppProvider'
 
@@ -16,31 +16,31 @@ interface Props {
     readonly board: Board
 
     readonly toggleAddCardModalWindow: (showAddCardModalWindow: boolean, boardId?: string) => void
-    readonly setTasks: (zoneOverId: string) => void
-    readonly saveTasks: (zoneId: string) => void
+    readonly setTasks: (boardOverId: string) => void
+    readonly saveTasks: (boardId: string) => void
 }
 type State = {}
 
 export class BoardComponent extends Component<Props, State> {
     public state = {}
-    private onDragOver = (e: React.DragEvent, zoneOverId: string) => {
+    private onDragOver = (e: React.DragEvent, boardOverId: string) => {
         e.preventDefault()
         const { setTasks } = this.props
-        setTasks(zoneOverId)
+        setTasks(boardOverId)
     }
-    private onDrop = (e: React.DragEvent, zoneId: string) => {
+    private onDrop = (e: React.DragEvent, boardId: string) => {
         e.preventDefault()
         const { saveTasks } = this.props
-        saveTasks(zoneId)
+        saveTasks(boardId)
     }
     public render() {
         const { board, toggleAddCardModalWindow } = this.props
         return (
             <>
-                <div className="zone" key={board.id}>
-                    <header className="zone-header">
-                        <div className="zone-name">{board.name}</div>
-                        <div className="zone-controls">
+                <div className="board" key={board.id}>
+                    <header className="board-header">
+                        <div className="board-name">{board.name}</div>
+                        <div className="board-controls">
                             <div
                                 className="add-task"
                                 onClick={() => {
@@ -62,7 +62,7 @@ export class BoardComponent extends Component<Props, State> {
                                     {board.tasks.map(task => (
                                         <Card
                                             key={task.id}
-                                            zoneId={board.id}
+                                            boardId={board.id}
                                             task={task}
                                             deleteCard={deleteCard}
                                             updateDraggedCard={updateDraggedCard}

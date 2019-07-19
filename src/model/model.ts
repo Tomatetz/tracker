@@ -10,6 +10,7 @@ export interface Task {
     id: number
     name: string
     body?: string
+    owner: string
 }
 
 export interface Board {

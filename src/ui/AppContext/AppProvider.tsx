@@ -18,22 +18,22 @@ const initialState = {
     saveTasks: (_: string) => {
         return
     },
-    addCard: (zoneId: string, card: Task) => {
-        return { zoneId, card }
+    addCard: (boardId: string, card: Task) => {
+        return { boardId, card }
     },
-    deleteCard: (zoneId: string, cardId: number) => {
-        return { zoneId, cardId }
+    deleteCard: (boardId: string, cardId: number) => {
+        return { boardId, cardId }
     },
-    updateDraggedCard: (zoneId: string, card: Task) => {
-        return { zoneId, card }
+    updateDraggedCard: (boardId: string, card: Task) => {
+        return { boardId, card }
     },
-    updateEditedCard: (zoneId: string, card: Task) => {
-        return { zoneId, card }
+    updateEditedCard: (boardId: string, card: Task) => {
+        return { boardId, card }
     },
     boards: [] as Board[],
     draggedCard: {
         card: {} as Task,
-        zoneId: '',
+        boardId: '',
     },
 }
 type State = typeof initialState
@@ -69,12 +69,12 @@ export class ContentProvider extends Component<Props, State> {
                 this.setState({ boards })
             })
     }
-    private setTasks = (zoneOverId: string) => {
+    private setTasks = (boardOverId: string) => {
         const { boards } = this.state
         const { card } = this.state.draggedCard
         let newBoards: Board[] = [...boards]
         newBoards.forEach((board: Board, i: number) => {
-            if (board.id === zoneOverId) {
+            if (board.id === boardOverId) {
                 if (!board.tasks.some(item => item.id === card.id)) {
                     board.tasks.push(card)
                 }
@@ -86,59 +86,57 @@ export class ContentProvider extends Component<Props, State> {
             }
         })
     }
-    private deleteCard = (zoneId: string, cardId: number) => {
+    private deleteCard = (boardId: string, cardId: number) => {
         const { boards } = this.state
-        const currentZone = JSON.parse(JSON.stringify(boards)).filter(
-            (board: Board) => board.id === zoneId,
+        const currentboard = JSON.parse(JSON.stringify(boards)).filter(
+            (board: Board) => board.id === boardId,
         )[0]
-        currentZone.tasks = currentZone.tasks.filter((value: Task) => value.id !== cardId)
+        currentboard.tasks = currentboard.tasks.filter((value: Task) => value.id !== cardId)
 
         firebase
             .firestore()
             .collection('tasks')
-            .doc(zoneId)
-            .set(currentZone)
-        return { zoneId, cardId }
+            .doc(boardId)
+            .set(currentboard)
+        return { boardId, cardId }
     }
-    private addCard = (zoneId: string, card: Task) => {
+    private addCard = (boardId: string, card: Task) => {
         const { boards } = this.state
-        const currentZone = JSON.parse(JSON.stringify(boards)).filter(
-            (board: Board) => board.id === zoneId,
+        const currentboard = JSON.parse(JSON.stringify(boards)).filter(
+            (board: Board) => board.id === boardId,
         )[0]
-        currentZone.tasks.push(card)
+        currentboard.tasks.push(card)
         firebase
             .firestore()
             .collection('tasks')
-            .doc(zoneId)
-            .set(currentZone)
-        return { zoneId, card }
+            .doc(boardId)
+            .set(currentboard)
+        return { boardId, card }
     }
-    private saveTasks = (zoneId: string) => {
-        const { zoneId: zoneDropFromId } = this.state.draggedCard
+    private saveTasks = (boardId: string) => {
+        const { boardId: boardDropFromId } = this.state.draggedCard
         const { boards } = this.state
-        const zoneDropTo = JSON.parse(JSON.stringify(boards)).filter(
-            (board: Board) => board.id === zoneId,
+        const boardDropTo = JSON.parse(JSON.stringify(boards)).filter(
+            (board: Board) => board.id === boardId,
         )[0]
-        const zoneDropFrom = JSON.parse(JSON.stringify(boards)).filter(
-            (board: Board) => board.id === zoneDropFromId,
+        const boardDropFrom = JSON.parse(JSON.stringify(boards)).filter(
+            (board: Board) => board.id === boardDropFromId,
         )[0]
 
         const batch = firebase.firestore().collection('tasks')
         batch
-            .doc(zoneDropFromId)
-            .update(zoneDropFrom)
+            .doc(boardDropFromId)
+            .update(boardDropFrom)
             .then(() => {
-                batch.doc(zoneId).update(zoneDropTo)
+                batch.doc(boardId).update(boardDropTo)
             })
     }
-    private updateDraggedCard = (zoneId: string, card: Task) => {
-        this.setState({ draggedCard: { zoneId, card } })
-        return { zoneId, card }
+    private updateDraggedCard = (boardId: string, card: Task) => {
+        this.setState({ draggedCard: { boardId, card } })
+        return { boardId, card }
     }
-    private updateEditedCard = (zoneId: string, card: Task) => {
-
-        
-        return { zoneId, card }
+    private updateEditedCard = (boardId: string, card: Task) => {
+        return { boardId, card }
     }
     public render() {
         return <Provider value={this.state}>{this.props.children}</Provider>

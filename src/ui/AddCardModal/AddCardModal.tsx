@@ -9,6 +9,8 @@ import './AddCardModal.scss'
 import React, { Component } from 'react'
 
 import { Task } from '../../model'
+import avatarLesha from '../static/avatar.jpg'
+import avatarLiza from '../static/avatar-liza.jpg'
 
 interface Props {
     readonly toggleAddCardModalWindow: (_: boolean) => void
@@ -17,26 +19,29 @@ interface Props {
 type State = {
     name: string
     body: string
+    owner: string
 }
 
 export class AddCardModal extends Component<Props, State> {
     public state = {
         name: '',
         body: '',
+        owner: 'lesha',
     }
     private onSaveCardClick = () => {
-        const { name, body } = this.state
+        const { name, body, owner } = this.state
         const { saveNewCard } = this.props
         const newCard = {
             name,
             body,
+            owner,
             id: Math.floor(Math.random() * 100000),
         } as Task
         saveNewCard(newCard)
     }
     public render() {
         const { toggleAddCardModalWindow } = this.props
-        const { name, body } = this.state
+        const { name, body, owner } = this.state
         return (
             <>
                 <div className="add-card-modal-content">
@@ -61,6 +66,27 @@ export class AddCardModal extends Component<Props, State> {
                                 this.setState({ body })
                             }}
                         ></input>
+                    </div>
+                    <div className="basic-element">
+                        <label>Owner</label>
+                        <div>
+                            <img
+                                className={'owner-image' + (owner === 'lesha' ? ' selected' : '')}
+                                src={avatarLesha}
+                                alt="lesha"
+                                onClick={() => {
+                                    this.setState({ owner: 'lesha' })
+                                }}
+                            />
+                            <img
+                                className={'owner-image' + (owner === 'liza' ? ' selected' : '')}
+                                src={avatarLiza}
+                                alt="liza"
+                                onClick={() => {
+                                    this.setState({ owner: 'liza' })
+                                }}
+                            />
+                        </div>
                     </div>
 
                     <footer className="footer-basic">

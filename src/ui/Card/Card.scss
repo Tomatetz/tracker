@@ -3,10 +3,19 @@
     background-color: white;
     color: black;
     padding: 10px;
+    font-size: 20px;
 
     .card-header {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 8px;
+
+        .owner-image {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
 
         .card-header__navigation {
             display: flex;
@@ -29,5 +38,13 @@
         padding-top: 10px;
         border-top: 1px solid #333;
         font-size: 14px;
+    }
+
+    &.owner-lesha {
+        border-top: 6px solid #007eff;
+    }
+
+    &.owner-liza {
+        border-top: 6px solid #e80ca5;
     }
 }

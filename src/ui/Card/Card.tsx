@@ -9,36 +9,43 @@ import './Card.scss'
 import React, { FC } from 'react'
 
 import { Task } from '../../model'
+import avatarLesha from '../static/avatar.jpg'
+import avatarLiza from '../static/avatar-liza.jpg'
 
 interface Props {
     readonly task: Task
-    readonly deleteCard: (zoneId: string, cardId: number) => void
-    readonly zoneId: string
-    readonly updateDraggedCard: (zoneId: string, card: Task) => void
+    readonly deleteCard: (boardId: string, cardId: number) => void
+    readonly boardId: string
+    readonly updateDraggedCard: (boardId: string, card: Task) => void
 }
 
-export const Card: FC<Props> = ({ task, deleteCard, zoneId, updateDraggedCard }) => {
+export const Card: FC<Props> = ({ task, deleteCard, boardId, updateDraggedCard }) => {
     return (
         <div
             draggable
-            className="card"
+            className={'card' + (task.owner === 'lesha' ? ' owner-lesha' : ' owner-liza')}
             onDragStart={() => {
-                updateDraggedCard(zoneId, task)
+                updateDraggedCard(boardId, task)
             }}
         >
             <header className="card-header">
+                <img
+                    className="owner-image"
+                    src={task.owner === 'lesha' ? avatarLesha : avatarLiza}
+                    alt="avatar"
+                />
                 <div className="card-header__navigation">
                     <div
                         className="delete-card"
                         onClick={() => {
-                            deleteCard(zoneId, task.id)
+                            deleteCard(boardId, task.id)
                         }}
                     >
                         ✕
                     </div>
                 </div>
-                {task.name}
             </header>
+            {task.name}
             {task.body && <article className="card-body">{task.body}</article>}
         </div>
     )

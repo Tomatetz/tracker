@@ -24,5 +24,24 @@
         top: calc(50% - 300px);
         min-height: 100px;
         position: relative;
+
+        .owner-image {
+            margin: 10px;
+            width: 50px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: filter 500ms;
+            filter: grayscale(100%);
+
+            &:hover {
+                box-sizing: border-box;
+                filter: grayscale(80%);
+            }
+            &.selected {
+                box-sizing: border-box;
+                border: 1px solid #f80;
+                filter: grayscale(0%);
+            }
+        }
     }
 }
