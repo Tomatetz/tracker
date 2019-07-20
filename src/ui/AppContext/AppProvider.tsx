@@ -122,7 +122,6 @@ export class ContentProvider extends Component<Props, State> {
         const boardDropFrom = JSON.parse(JSON.stringify(boards)).filter(
             (board: Board) => board.id === boardDropFromId,
         )[0]
-
         const batch = firebase.firestore().collection('tasks')
         batch
             .doc(boardDropFromId)

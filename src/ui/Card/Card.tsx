@@ -24,9 +24,7 @@ export const Card: FC<Props> = ({ task, deleteCard, boardId, updateDraggedCard }
         <div
             draggable
             className={'card' + (task.owner === 'lesha' ? ' owner-lesha' : ' owner-liza')}
-            onDragStart={() => {
-                updateDraggedCard(boardId, task)
-            }}
+            onDragStart={_ => updateDraggedCard(boardId, task)}
         >
             <header className="card-header">
                 <img
@@ -35,18 +33,13 @@ export const Card: FC<Props> = ({ task, deleteCard, boardId, updateDraggedCard }
                     alt="avatar"
                 />
                 <div className="card-header__navigation">
-                    <div
-                        className="delete-card"
-                        onClick={() => {
-                            deleteCard(boardId, task.id)
-                        }}
-                    >
+                    <div className="delete-card" onClick={_ => deleteCard}>
                         ✕
                     </div>
                 </div>
             </header>
             {task.name}
-            {task.body && <article className="card-body">{task.body}</article>}
+            <article className="card-body">{task.body}</article>
         </div>
     )
 }

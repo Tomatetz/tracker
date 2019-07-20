@@ -19,9 +19,8 @@ interface Props {
     readonly setTasks: (boardOverId: string) => void
     readonly saveTasks: (boardId: string) => void
 }
-type State = {}
 
-export class BoardComponent extends Component<Props, State> {
+export class BoardComponent extends Component<Props> {
     public state = {}
     private onDragOver = (e: React.DragEvent, boardOverId: string) => {
         e.preventDefault()
@@ -36,44 +35,40 @@ export class BoardComponent extends Component<Props, State> {
     public render() {
         const { board, toggleAddCardModalWindow } = this.props
         return (
-            <>
-                <div className="board" key={board.id}>
-                    <header className="board-header">
-                        <div className="board-name">{board.name}</div>
-                        <div className="board-controls">
-                            <div
-                                className="add-task"
-                                onClick={() => {
-                                    toggleAddCardModalWindow(true, board.id)
-                                }}
-                            >
-                                +
-                            </div>
+            <div className="board" key={board.id}>
+                <header className="board-header">
+                    <div className="board-name">{board.name}</div>
+                    <div className="board-controls">
+                        <div
+                            className="add-task"
+                            onClick={_ => toggleAddCardModalWindow(true, board.id)}
+                        >
+                            +
                         </div>
-                    </header>
-                    <div
-                        className="droppable"
-                        onDragOver={e => this.onDragOver(e, board.id)}
-                        onDrop={e => this.onDrop(e, board.id)}
-                    >
-                        <ContentConsumer>
-                            {({ deleteCard, updateDraggedCard }) => (
-                                <>
-                                    {board.tasks.map(task => (
-                                        <Card
-                                            key={task.id}
-                                            boardId={board.id}
-                                            task={task}
-                                            deleteCard={deleteCard}
-                                            updateDraggedCard={updateDraggedCard}
-                                        />
-                                    ))}
-                                </>
-                            )}
-                        </ContentConsumer>
                     </div>
+                </header>
+                <div
+                    className="droppable"
+                    onDragOver={e => this.onDragOver(e, board.id)}
+                    onDrop={e => this.onDrop(e, board.id)}
+                >
+                    <ContentConsumer>
+                        {({ deleteCard, updateDraggedCard }) => (
+                            <>
+                                {board.tasks.map(task => (
+                                    <Card
+                                        key={task.id}
+                                        boardId={board.id}
+                                        task={task}
+                                        deleteCard={deleteCard}
+                                        updateDraggedCard={updateDraggedCard}
+                                    />
+                                ))}
+                            </>
+                        )}
+                    </ContentConsumer>
                 </div>
-            </>
+            </div>
         )
     }
 }

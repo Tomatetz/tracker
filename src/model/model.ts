@@ -9,7 +9,7 @@
 export interface Task {
     id: number
     name: string
-    body?: string
+    body: string
     owner: string
 }
 
