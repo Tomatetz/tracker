@@ -16,7 +16,7 @@ interface Props {
     readonly toggleAddCardModalWindow: (_: boolean) => void
     readonly saveNewCard: (card: Task) => void
 }
-export const AddCardModal: FC<Props> = ({ toggleAddCardModalWindow, saveNewCard }) => {
+export const CardModal: FC<Props> = ({ toggleAddCardModalWindow, saveNewCard }) => {
     const [card, setCardData] = useState({
         name: '',
         body: '',

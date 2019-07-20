@@ -14,32 +14,34 @@ import avatarLiza from '../static/avatar-liza.jpg'
 
 interface Props {
     readonly task: Task
-    readonly deleteCard: (boardId: string, cardId: number) => void
     readonly boardId: string
+    readonly deleteCard: (boardId: string, cardId: number) => void
     readonly updateDraggedCard: (boardId: string, card: Task) => void
 }
 
 export const Card: FC<Props> = ({ task, deleteCard, boardId, updateDraggedCard }) => {
     return (
-        <div
-            draggable
-            className={'card' + (task.owner === 'lesha' ? ' owner-lesha' : ' owner-liza')}
-            onDragStart={_ => updateDraggedCard(boardId, task)}
-        >
-            <header className="card-header">
-                <img
-                    className="owner-image"
-                    src={task.owner === 'lesha' ? avatarLesha : avatarLiza}
-                    alt="avatar"
-                />
-                <div className="card-header__navigation">
-                    <div className="delete-card" onClick={_ => deleteCard}>
-                        ✕
+        <>
+            <div
+                draggable
+                className={'card' + (task.owner === 'lesha' ? ' owner-lesha' : ' owner-liza')}
+                onDragStart={_ => updateDraggedCard(boardId, task)}
+            >
+                <header className="card-header">
+                    <img
+                        className="owner-image"
+                        src={task.owner === 'lesha' ? avatarLesha : avatarLiza}
+                        alt="avatar"
+                    />
+                    <div className="card-header__navigation">
+                        <div className="delete-card" onClick={_ => deleteCard(boardId, task.id)}>
+                            ✕
+                        </div>
                     </div>
-                </div>
-            </header>
-            {task.name}
-            <article className="card-body">{task.body}</article>
-        </div>
+                </header>
+                {task.name}
+                <article className="card-body">{task.body}</article>
+            </div>
+        </>
     )
 }

@@ -8,8 +8,8 @@ import './Content.scss'
 
 import React, { Component } from 'react'
 
-import { AddCardModal } from '../AddCardModal'
 import { BoardComponent } from '../BoardComponent'
+import { CardModal } from '../AddCardModal'
 import { ContentConsumer } from '../AppContext/AppProvider'
 import { ModalComponent } from '../ModalWindow'
 import { Task } from '../../model'
@@ -62,7 +62,7 @@ export class Content extends Component<Props, State> {
 
                 {showAddCardModalWindow && (
                     <ModalComponent>
-                        <AddCardModal
+                        <CardModal
                             toggleAddCardModalWindow={this.toggleAddCardModalWindow}
                             saveNewCard={this.saveNewCard}
                         />
