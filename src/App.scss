@@ -57,10 +57,15 @@ label {
   border: none;
   margin-left: 8px;
   border-radius: 2px;
-  cursor:pointer;
   background-color: #7fcc7f;
-  &:hover {
+  &:not(:disabled) {
+    cursor:pointer;
+  }
+  &:hover:not(:disabled) {
       background-color: #4d984d;
+  }
+  &:disabled {
+    background-color: #ccc;
   }
   &:focus {
       outline: none;

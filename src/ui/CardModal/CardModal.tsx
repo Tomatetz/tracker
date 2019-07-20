@@ -63,6 +63,7 @@ export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defau
                 </button>
                 <button
                     className="button-brand"
+                    disabled={!card.name || !card.body}
                     onClick={_ => {
                         toggleShowCardModalWindow(false)
                         defaultCard.name ? saveUpdatedCard(boardId, card) : addCard(boardId, card)
