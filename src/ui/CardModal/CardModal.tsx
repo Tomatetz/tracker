@@ -28,6 +28,7 @@ export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defau
                 <label>Name</label>
                 <input
                     className="input-basic"
+                    autoFocus
                     value={card.name}
                     onChange={e => setCardData({ ...card, name: e.currentTarget.value })}
                 />
