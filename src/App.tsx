@@ -4,8 +4,6 @@ import { Content } from './ui/Content/Content'
 import { ContentProvider } from './ui/AppContext/AppProvider'
 import React from 'react'
 
-// import logo from './logo.svg'
-
 const App: React.FC = () => {
     return (
         <div className="App">

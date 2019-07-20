@@ -12,24 +12,12 @@ import React, { Component, createContext } from 'react'
 type Props = {}
 
 const initialState = {
-    reorderCards: (_: string) => {
-        return
-    },
-    saveCards: (_: string) => {
-        return
-    },
-    addCard: (boardId: string, card: Task) => {
-        return { boardId, card }
-    },
-    saveUpdatedCard: (boardId: string, card: Task) => {
-        return { boardId, card }
-    },
-    deleteCard: (boardId: string, cardId: number) => {
-        return { boardId, cardId }
-    },
-    updateDraggedCard: (boardId: string, card: Task) => {
-        return { boardId, card }
-    },
+    reorderCards: (_: string) => {},
+    saveCards: (_: string) => {},
+    addCard: (boardId: string, card: Task) => {},
+    saveUpdatedCard: (boardId: string, card: Task) => {},
+    deleteCard: (boardId: string, cardId: number) => {},
+    updateDraggedCard: (boardId: string, card: Task) => {},
     boards: [] as Board[],
     draggedCard: {
         card: {} as Task,
@@ -120,7 +108,6 @@ export class ContentProvider extends Component<Props, State> {
             .collection('tasks')
             .doc(boardId)
             .update(currentboard)
-        return { boardId, cardId }
     }
     private addCard = (boardId: string, card: Task) => {
         const { boards } = this.state
@@ -133,7 +120,6 @@ export class ContentProvider extends Component<Props, State> {
             .collection('tasks')
             .doc(boardId)
             .update(currentboard)
-        return { boardId, card }
     }
     private saveUpdatedCard = (boardId: string, card: Task) => {
         const { boards } = this.state
@@ -148,11 +134,9 @@ export class ContentProvider extends Component<Props, State> {
             .collection('tasks')
             .doc(boardId)
             .update(currentboard)
-        return { boardId, card }
     }
     private updateDraggedCard = (boardId: string, card: Task) => {
         this.setState({ draggedCard: { boardId, card } })
-        return { boardId, card }
     }
     public render() {
         return <Provider value={this.state}>{this.props.children}</Provider>
