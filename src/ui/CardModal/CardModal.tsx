@@ -4,7 +4,7 @@
  * License is found in the LICENSE file in the root directory of this source tree.
  */
 
-import './AddCardModal.scss'
+import './CardModal.scss'
 
 import React, { FC, useState } from 'react'
 
@@ -13,10 +13,12 @@ import avatarLesha from '../static/avatar.jpg'
 import avatarLiza from '../static/avatar-liza.jpg'
 
 interface Props {
+    readonly card?: Task
+    readonly boardId: string
     readonly toggleAddCardModalWindow: (_: boolean) => void
-    readonly saveNewCard: (card: Task) => void
+    readonly addCard: (boardId: string, card: Task) => void
 }
-export const CardModal: FC<Props> = ({ toggleAddCardModalWindow, saveNewCard }) => {
+export const CardModal: FC<Props> = ({ toggleAddCardModalWindow, addCard, boardId }) => {
     const [card, setCardData] = useState({
         name: '',
         body: '',
@@ -63,7 +65,13 @@ export const CardModal: FC<Props> = ({ toggleAddCardModalWindow, saveNewCard }) 
                 <button className="button-basic" onClick={_ => toggleAddCardModalWindow(false)}>
                     Cancel
                 </button>
-                <button className="button-brand" onClick={_ => saveNewCard(card)}>
+                <button
+                    className="button-brand"
+                    onClick={_ => {
+                        toggleAddCardModalWindow(false)
+                        addCard(boardId, card)
+                    }}
+                >
                     Submit
                 </button>
             </footer>

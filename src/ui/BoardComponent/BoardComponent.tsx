@@ -6,69 +6,85 @@
 
 import './BoardComponent.scss'
 
+import { Board, Task } from '../../model'
 import React, { Component } from 'react'
 
-import { Board } from '../../model'
 import { Card } from '../Card/Card'
+import { CardModal } from '../CardModal'
 import { ContentConsumer } from '../AppContext/AppProvider'
+import { ModalComponent } from '../ModalWindow'
 
 interface Props {
     readonly board: Board
-
-    readonly toggleAddCardModalWindow: (showAddCardModalWindow: boolean, boardId?: string) => void
-    readonly setTasks: (boardOverId: string) => void
-    readonly saveTasks: (boardId: string) => void
+    readonly reorderCards: (boardOverId: string) => void
+    readonly saveCards: (boardId: string) => void
+    readonly addCard: (boardId: string, card: Task) => void
 }
 
-export class BoardComponent extends Component<Props> {
-    public state = {}
-    private onDragOver = (e: React.DragEvent, boardOverId: string) => {
-        e.preventDefault()
-        const { setTasks } = this.props
-        setTasks(boardOverId)
+interface State {
+    showAddCardModalWindow: boolean
+}
+
+export class BoardComponent extends Component<Props, State> {
+    public state = {
+        showAddCardModalWindow: false,
     }
-    private onDrop = (e: React.DragEvent, boardId: string) => {
-        e.preventDefault()
-        const { saveTasks } = this.props
-        saveTasks(boardId)
+    private toggleAddCardModalWindow = (showAddCardModalWindow: boolean) => {
+        this.setState({ showAddCardModalWindow })
     }
     public render() {
-        const { board, toggleAddCardModalWindow } = this.props
+        const { board, addCard, saveCards, reorderCards } = this.props
+        const { showAddCardModalWindow } = this.state
         return (
-            <div className="board" key={board.id}>
-                <header className="board-header">
-                    <div className="board-name">{board.name}</div>
-                    <div className="board-controls">
-                        <div
-                            className="add-task"
-                            onClick={_ => toggleAddCardModalWindow(true, board.id)}
-                        >
-                            +
+            <>
+                <div className="board" key={board.id}>
+                    <header className="board-header">
+                        <div className="board-name">{board.name}</div>
+                        <div className="board-controls">
+                            <div
+                                className="add-task"
+                                onClick={_ => this.toggleAddCardModalWindow(true)}
+                            >
+                                +
+                            </div>
                         </div>
+                    </header>
+                    <div
+                        className="droppable"
+                        onDragOver={e => {
+                            e.preventDefault()
+                            reorderCards(board.id)
+                        }}
+                        onDrop={_ => saveCards(board.id)}
+                    >
+                        <ContentConsumer>
+                            {({ deleteCard, updateDraggedCard }) => (
+                                <>
+                                    {board.tasks.map(task => (
+                                        <Card
+                                            key={task.id}
+                                            boardId={board.id}
+                                            task={task}
+                                            deleteCard={deleteCard}
+                                            updateDraggedCard={updateDraggedCard}
+                                        />
+                                    ))}
+                                </>
+                            )}
+                        </ContentConsumer>
                     </div>
-                </header>
-                <div
-                    className="droppable"
-                    onDragOver={e => this.onDragOver(e, board.id)}
-                    onDrop={e => this.onDrop(e, board.id)}
-                >
-                    <ContentConsumer>
-                        {({ deleteCard, updateDraggedCard }) => (
-                            <>
-                                {board.tasks.map(task => (
-                                    <Card
-                                        key={task.id}
-                                        boardId={board.id}
-                                        task={task}
-                                        deleteCard={deleteCard}
-                                        updateDraggedCard={updateDraggedCard}
-                                    />
-                                ))}
-                            </>
-                        )}
-                    </ContentConsumer>
                 </div>
-            </div>
+
+                {showAddCardModalWindow && (
+                    <ModalComponent>
+                        <CardModal
+                            toggleAddCardModalWindow={this.toggleAddCardModalWindow}
+                            boardId={board.id}
+                            addCard={addCard}
+                        />
+                    </ModalComponent>
+                )}
+            </>
         )
     }
 }

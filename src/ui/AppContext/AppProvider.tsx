@@ -12,10 +12,10 @@ import React, { Component, createContext } from 'react'
 type Props = {}
 
 const initialState = {
-    setTasks: (_: string) => {
+    reorderCards: (_: string) => {
         return
     },
-    saveTasks: (_: string) => {
+    saveCards: (_: string) => {
         return
     },
     addCard: (boardId: string, card: Task) => {
@@ -25,9 +25,6 @@ const initialState = {
         return { boardId, cardId }
     },
     updateDraggedCard: (boardId: string, card: Task) => {
-        return { boardId, card }
-    },
-    updateEditedCard: (boardId: string, card: Task) => {
         return { boardId, card }
     },
     boards: [] as Board[],
@@ -44,12 +41,11 @@ export class ContentProvider extends Component<Props, State> {
         super(props)
         this.state = {
             ...initialState,
-            setTasks: this.setTasks,
+            reorderCards: this.reorderCards,
             deleteCard: this.deleteCard,
             addCard: this.addCard,
-            saveTasks: this.saveTasks,
+            saveCards: this.saveCards,
             updateDraggedCard: this.updateDraggedCard,
-            updateEditedCard: this.updateEditedCard,
         }
     }
     public componentDidMount() {
@@ -69,7 +65,7 @@ export class ContentProvider extends Component<Props, State> {
                 this.setState({ boards })
             })
     }
-    private setTasks = (boardOverId: string) => {
+    private reorderCards = (boardOverId: string) => {
         const { boards } = this.state
         const { card } = this.state.draggedCard
         let newBoards: Board[] = [...boards]
@@ -85,6 +81,25 @@ export class ContentProvider extends Component<Props, State> {
                 this.setState({ boards: newBoards })
             }
         })
+    }
+    private saveCards = (boardId: string) => {
+        const { boardId: boardDropFromId } = this.state.draggedCard
+        const { boards } = this.state
+        if (boardId !== boardDropFromId) {
+            const boardDropTo = JSON.parse(JSON.stringify(boards)).filter(
+                (board: Board) => board.id === boardId,
+            )[0]
+            const boardDropFrom = JSON.parse(JSON.stringify(boards)).filter(
+                (board: Board) => board.id === boardDropFromId,
+            )[0]
+            const batch = firebase.firestore().collection('tasks')
+            batch
+                .doc(boardDropFromId)
+                .update(boardDropFrom)
+                .then(() => {
+                    batch.doc(boardId).update(boardDropTo)
+                })
+        }
     }
     private deleteCard = (boardId: string, cardId: number) => {
         const { boards } = this.state
@@ -110,31 +125,11 @@ export class ContentProvider extends Component<Props, State> {
             .firestore()
             .collection('tasks')
             .doc(boardId)
-            .set(currentboard)
+            .update(currentboard)
         return { boardId, card }
-    }
-    private saveTasks = (boardId: string) => {
-        const { boardId: boardDropFromId } = this.state.draggedCard
-        const { boards } = this.state
-        const boardDropTo = JSON.parse(JSON.stringify(boards)).filter(
-            (board: Board) => board.id === boardId,
-        )[0]
-        const boardDropFrom = JSON.parse(JSON.stringify(boards)).filter(
-            (board: Board) => board.id === boardDropFromId,
-        )[0]
-        const batch = firebase.firestore().collection('tasks')
-        batch
-            .doc(boardDropFromId)
-            .update(boardDropFrom)
-            .then(() => {
-                batch.doc(boardId).update(boardDropTo)
-            })
     }
     private updateDraggedCard = (boardId: string, card: Task) => {
         this.setState({ draggedCard: { boardId, card } })
-        return { boardId, card }
-    }
-    private updateEditedCard = (boardId: string, card: Task) => {
         return { boardId, card }
     }
     public render() {
