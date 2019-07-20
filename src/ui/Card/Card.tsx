@@ -6,8 +6,10 @@
 
 import './Card.scss'
 
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 
+import { Context } from '../AppContext/AppProvider'
+import { ReactComponent as EditIcon } from '../static/edit2.svg'
 import { Task } from '../../model'
 import avatarLesha from '../static/avatar.jpg'
 import avatarLiza from '../static/avatar-liza.jpg'
@@ -15,18 +17,12 @@ import avatarLiza from '../static/avatar-liza.jpg'
 interface Props {
     readonly task: Task
     readonly boardId: string
-    readonly deleteCard: (boardId: string, cardId: number) => void
-    readonly updateDraggedCard: (boardId: string, card: Task) => void
     readonly showEditCardModal: (card: Task) => void
 }
 
-export const Card: FC<Props> = ({
-    task,
-    deleteCard,
-    boardId,
-    updateDraggedCard,
-    showEditCardModal,
-}) => {
+export const Card: FC<Props> = ({ task, boardId, showEditCardModal }) => {
+    const { deleteCard, updateDraggedCard } = useContext(Context)
+
     return (
         <div
             draggable
@@ -40,15 +36,16 @@ export const Card: FC<Props> = ({
                     alt="avatar"
                 />
                 <div className="card-header__navigation">
+                    <div className="edit-card" onClick={_ => showEditCardModal(task)}>
+                        <EditIcon />
+                    </div>
                     <div className="delete-card" onClick={_ => deleteCard(boardId, task.id)}>
                         ✕
                     </div>
                 </div>
             </header>
             {task.name}
-            <article className="card-body" onClick={_ => showEditCardModal(task)}>
-                {task.body}
-            </article>
+            <article className="card-body">{task.body}</article>
         </div>
     )
 }

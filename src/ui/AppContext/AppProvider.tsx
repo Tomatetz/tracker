@@ -21,6 +21,9 @@ const initialState = {
     addCard: (boardId: string, card: Task) => {
         return { boardId, card }
     },
+    saveUpdatedCard: (boardId: string, card: Task) => {
+        return { boardId, card }
+    },
     deleteCard: (boardId: string, cardId: number) => {
         return { boardId, cardId }
     },
@@ -34,7 +37,10 @@ const initialState = {
     },
 }
 type State = typeof initialState
-const { Provider, Consumer } = createContext(initialState)
+
+export const Context = createContext(initialState)
+
+const { Provider, Consumer } = Context
 
 export class ContentProvider extends Component<Props, State> {
     constructor(props: Props) {
@@ -46,6 +52,7 @@ export class ContentProvider extends Component<Props, State> {
             addCard: this.addCard,
             saveCards: this.saveCards,
             updateDraggedCard: this.updateDraggedCard,
+            saveUpdatedCard: this.saveUpdatedCard,
         }
     }
     public componentDidMount() {
@@ -112,7 +119,7 @@ export class ContentProvider extends Component<Props, State> {
             .firestore()
             .collection('tasks')
             .doc(boardId)
-            .set(currentboard)
+            .update(currentboard)
         return { boardId, cardId }
     }
     private addCard = (boardId: string, card: Task) => {
@@ -121,6 +128,21 @@ export class ContentProvider extends Component<Props, State> {
             (board: Board) => board.id === boardId,
         )[0]
         currentboard.tasks.push(card)
+        firebase
+            .firestore()
+            .collection('tasks')
+            .doc(boardId)
+            .update(currentboard)
+        return { boardId, card }
+    }
+    private saveUpdatedCard = (boardId: string, card: Task) => {
+        const { boards } = this.state
+        const currentboard = JSON.parse(JSON.stringify(boards)).filter(
+            (board: Board) => board.id === boardId,
+        )[0]
+        currentboard.tasks = currentboard.tasks.map((task: Task) => {
+            return task.id === card.id ? card : task
+        })
         firebase
             .firestore()
             .collection('tasks')

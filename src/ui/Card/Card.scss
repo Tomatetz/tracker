@@ -19,7 +19,22 @@
 
         .card-header__navigation {
             display: flex;
-            flex-direction: row-reverse;
+            flex-direction: row;
+
+            .edit-card {
+                line-height: 35px;
+                margin: 0 8px;
+                cursor: pointer;
+
+                &:hover {
+                    fill: #00bcff;
+                }
+
+                svg {
+                    height: 15px;
+                    width: 15px;
+                }
+            }
 
             .delete-card {
                 font-size: 20px;

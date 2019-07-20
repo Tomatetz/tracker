@@ -14,24 +14,14 @@ import { ContentConsumer } from '../AppContext/AppProvider'
 interface Props {}
 
 export class Content extends Component<Props> {
-    public state = {
-        showAddCardModalWindow: false,
-        currentBoardId: '',
-    }
     public render() {
         return (
             <div className="content">
                 <ContentConsumer>
-                    {({ boards, reorderCards, saveCards, addCard }) => (
+                    {({ boards }) => (
                         <>
                             {boards.map(board => (
-                                <BoardComponent
-                                    key={board.id}
-                                    board={board}
-                                    reorderCards={reorderCards}
-                                    saveCards={saveCards}
-                                    addCard={addCard}
-                                />
+                                <BoardComponent key={board.id} board={board} />
                             ))}
                         </>
                     )}

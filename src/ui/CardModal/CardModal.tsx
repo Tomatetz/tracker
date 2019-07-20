@@ -6,8 +6,9 @@
 
 import './CardModal.scss'
 
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 
+import { Context } from '../AppContext/AppProvider'
 import { Task } from '../../model'
 import avatarLesha from '../static/avatar.jpg'
 import avatarLiza from '../static/avatar-liza.jpg'
@@ -15,26 +16,11 @@ import avatarLiza from '../static/avatar-liza.jpg'
 interface Props {
     readonly defaultCard: Task
     readonly boardId: string
-    readonly toggleAddCardModalWindow: (_: boolean) => void
-    readonly addCard: (boardId: string, card: Task) => void
+    readonly toggleShowCardModalWindow: (_: boolean) => void
 }
-export const CardModal: FC<Props> = ({
-    toggleAddCardModalWindow,
-    addCard,
-    boardId,
-    defaultCard,
-}) => {
-    const [card, setCardData] = useState({
-        name: '',
-        body: '',
-        owner: 'lesha',
-        id: Math.floor(Math.random() * 100000),
-    })
-    useEffect(() => {
-        if (defaultCard.id) {
-            setCardData(defaultCard)
-        }
-    }, [])
+export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defaultCard }) => {
+    const [card, setCardData] = useState(defaultCard)
+    const { saveUpdatedCard, addCard } = useContext(Context)
 
     return (
         <div className="add-card-modal-content">
@@ -72,14 +58,14 @@ export const CardModal: FC<Props> = ({
                 </div>
             </div>
             <footer className="footer-basic">
-                <button className="button-basic" onClick={_ => toggleAddCardModalWindow(false)}>
+                <button className="button-basic" onClick={_ => toggleShowCardModalWindow(false)}>
                     Cancel
                 </button>
                 <button
                     className="button-brand"
                     onClick={_ => {
-                        toggleAddCardModalWindow(false)
-                        addCard(boardId, card)
+                        toggleShowCardModalWindow(false)
+                        defaultCard.name ? saveUpdatedCard(boardId, card) : addCard(boardId, card)
                     }}
                 >
                     Submit

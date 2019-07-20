@@ -7,27 +7,25 @@
 import './BoardComponent.scss'
 
 import { Board, Task } from '../../model'
-import React, { FC, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 
 import { Card } from '../Card/Card'
 import { CardModal } from '../CardModal'
-import { ContentConsumer } from '../AppContext/AppProvider'
+import { Context } from '../AppContext/AppProvider'
 import { ModalComponent } from '../ModalWindow'
 
 interface Props {
     readonly board: Board
-    readonly reorderCards: (boardOverId: string) => void
-    readonly saveCards: (boardId: string) => void
-    readonly addCard: (boardId: string, card: Task) => void
 }
 
-export const BoardComponent: FC<Props> = ({ board, addCard, saveCards, reorderCards }) => {
+export const BoardComponent: FC<Props> = ({ board }) => {
     const [showCardModalWindow, toggleShowCardModalWindow] = useState(false)
     const [editedCard, setEditedCardValue] = useState({} as Task)
     const showEditCardModal = (editedCard: Task) => {
         setEditedCardValue(editedCard)
         toggleShowCardModalWindow(true)
     }
+    const { reorderCards, saveCards } = useContext(Context)
     return (
         <>
             <div className="board" key={board.id}>
@@ -37,7 +35,12 @@ export const BoardComponent: FC<Props> = ({ board, addCard, saveCards, reorderCa
                         <div
                             className="add-task"
                             onClick={_ => {
-                                setEditedCardValue({} as Task)
+                                setEditedCardValue({
+                                    name: '',
+                                    body: '',
+                                    owner: 'lesha',
+                                    id: Math.floor(Math.random() * 100000),
+                                } as Task)
                                 toggleShowCardModalWindow(true)
                             }}
                         >
@@ -53,30 +56,21 @@ export const BoardComponent: FC<Props> = ({ board, addCard, saveCards, reorderCa
                     }}
                     onDrop={_ => saveCards(board.id)}
                 >
-                    <ContentConsumer>
-                        {({ deleteCard, updateDraggedCard }) => (
-                            <>
-                                {board.tasks.map(task => (
-                                    <Card
-                                        key={task.id}
-                                        boardId={board.id}
-                                        task={task}
-                                        deleteCard={deleteCard}
-                                        updateDraggedCard={updateDraggedCard}
-                                        showEditCardModal={showEditCardModal}
-                                    />
-                                ))}
-                            </>
-                        )}
-                    </ContentConsumer>
+                    {board.tasks.map(task => (
+                        <Card
+                            key={task.id}
+                            boardId={board.id}
+                            task={task}
+                            showEditCardModal={showEditCardModal}
+                        />
+                    ))}
                 </div>
             </div>
             {showCardModalWindow && (
                 <ModalComponent>
                     <CardModal
-                        toggleAddCardModalWindow={toggleShowCardModalWindow}
+                        toggleShowCardModalWindow={toggleShowCardModalWindow}
                         boardId={board.id}
-                        addCard={addCard}
                         defaultCard={editedCard}
                     />
                 </ModalComponent>
