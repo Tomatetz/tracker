@@ -7,7 +7,7 @@
 import './BoardComponent.scss'
 
 import { Board, Task } from '../../model'
-import React, { Component } from 'react'
+import React, { FC, useState } from 'react'
 
 import { Card } from '../Card/Card'
 import { CardModal } from '../CardModal'
@@ -21,70 +21,66 @@ interface Props {
     readonly addCard: (boardId: string, card: Task) => void
 }
 
-interface State {
-    showAddCardModalWindow: boolean
-}
-
-export class BoardComponent extends Component<Props, State> {
-    public state = {
-        showAddCardModalWindow: false,
+export const BoardComponent: FC<Props> = ({ board, addCard, saveCards, reorderCards }) => {
+    const [showCardModalWindow, toggleShowCardModalWindow] = useState(false)
+    const [editedCard, setEditedCardValue] = useState({} as Task)
+    const showEditCardModal = (editedCard: Task) => {
+        setEditedCardValue(editedCard)
+        toggleShowCardModalWindow(true)
     }
-    private toggleAddCardModalWindow = (showAddCardModalWindow: boolean) => {
-        this.setState({ showAddCardModalWindow })
-    }
-    public render() {
-        const { board, addCard, saveCards, reorderCards } = this.props
-        const { showAddCardModalWindow } = this.state
-        return (
-            <>
-                <div className="board" key={board.id}>
-                    <header className="board-header">
-                        <div className="board-name">{board.name}</div>
-                        <div className="board-controls">
-                            <div
-                                className="add-task"
-                                onClick={_ => this.toggleAddCardModalWindow(true)}
-                            >
-                                +
-                            </div>
+    return (
+        <>
+            <div className="board" key={board.id}>
+                <header className="board-header">
+                    <div className="board-name">{board.name}</div>
+                    <div className="board-controls">
+                        <div
+                            className="add-task"
+                            onClick={_ => {
+                                setEditedCardValue({} as Task)
+                                toggleShowCardModalWindow(true)
+                            }}
+                        >
+                            +
                         </div>
-                    </header>
-                    <div
-                        className="droppable"
-                        onDragOver={e => {
-                            e.preventDefault()
-                            reorderCards(board.id)
-                        }}
-                        onDrop={_ => saveCards(board.id)}
-                    >
-                        <ContentConsumer>
-                            {({ deleteCard, updateDraggedCard }) => (
-                                <>
-                                    {board.tasks.map(task => (
-                                        <Card
-                                            key={task.id}
-                                            boardId={board.id}
-                                            task={task}
-                                            deleteCard={deleteCard}
-                                            updateDraggedCard={updateDraggedCard}
-                                        />
-                                    ))}
-                                </>
-                            )}
-                        </ContentConsumer>
                     </div>
+                </header>
+                <div
+                    className="droppable"
+                    onDragOver={e => {
+                        e.preventDefault()
+                        reorderCards(board.id)
+                    }}
+                    onDrop={_ => saveCards(board.id)}
+                >
+                    <ContentConsumer>
+                        {({ deleteCard, updateDraggedCard }) => (
+                            <>
+                                {board.tasks.map(task => (
+                                    <Card
+                                        key={task.id}
+                                        boardId={board.id}
+                                        task={task}
+                                        deleteCard={deleteCard}
+                                        updateDraggedCard={updateDraggedCard}
+                                        showEditCardModal={showEditCardModal}
+                                    />
+                                ))}
+                            </>
+                        )}
+                    </ContentConsumer>
                 </div>
-
-                {showAddCardModalWindow && (
-                    <ModalComponent>
-                        <CardModal
-                            toggleAddCardModalWindow={this.toggleAddCardModalWindow}
-                            boardId={board.id}
-                            addCard={addCard}
-                        />
-                    </ModalComponent>
-                )}
-            </>
-        )
-    }
+            </div>
+            {showCardModalWindow && (
+                <ModalComponent>
+                    <CardModal
+                        toggleAddCardModalWindow={toggleShowCardModalWindow}
+                        boardId={board.id}
+                        addCard={addCard}
+                        defaultCard={editedCard}
+                    />
+                </ModalComponent>
+            )}
+        </>
+    )
 }

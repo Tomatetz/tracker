@@ -17,31 +17,38 @@ interface Props {
     readonly boardId: string
     readonly deleteCard: (boardId: string, cardId: number) => void
     readonly updateDraggedCard: (boardId: string, card: Task) => void
+    readonly showEditCardModal: (card: Task) => void
 }
 
-export const Card: FC<Props> = ({ task, deleteCard, boardId, updateDraggedCard }) => {
+export const Card: FC<Props> = ({
+    task,
+    deleteCard,
+    boardId,
+    updateDraggedCard,
+    showEditCardModal,
+}) => {
     return (
-        <>
-            <div
-                draggable
-                className={'card' + (task.owner === 'lesha' ? ' owner-lesha' : ' owner-liza')}
-                onDragStart={_ => updateDraggedCard(boardId, task)}
-            >
-                <header className="card-header">
-                    <img
-                        className="owner-image"
-                        src={task.owner === 'lesha' ? avatarLesha : avatarLiza}
-                        alt="avatar"
-                    />
-                    <div className="card-header__navigation">
-                        <div className="delete-card" onClick={_ => deleteCard(boardId, task.id)}>
-                            ✕
-                        </div>
+        <div
+            draggable
+            className={'card' + (task.owner === 'lesha' ? ' owner-lesha' : ' owner-liza')}
+            onDragStart={_ => updateDraggedCard(boardId, task)}
+        >
+            <header className="card-header">
+                <img
+                    className="owner-image"
+                    src={task.owner === 'lesha' ? avatarLesha : avatarLiza}
+                    alt="avatar"
+                />
+                <div className="card-header__navigation">
+                    <div className="delete-card" onClick={_ => deleteCard(boardId, task.id)}>
+                        ✕
                     </div>
-                </header>
-                {task.name}
-                <article className="card-body">{task.body}</article>
-            </div>
-        </>
+                </div>
+            </header>
+            {task.name}
+            <article className="card-body" onClick={_ => showEditCardModal(task)}>
+                {task.body}
+            </article>
+        </div>
     )
 }

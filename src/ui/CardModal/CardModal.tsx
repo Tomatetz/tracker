@@ -6,25 +6,35 @@
 
 import './CardModal.scss'
 
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 import { Task } from '../../model'
 import avatarLesha from '../static/avatar.jpg'
 import avatarLiza from '../static/avatar-liza.jpg'
 
 interface Props {
-    readonly card?: Task
+    readonly defaultCard: Task
     readonly boardId: string
     readonly toggleAddCardModalWindow: (_: boolean) => void
     readonly addCard: (boardId: string, card: Task) => void
 }
-export const CardModal: FC<Props> = ({ toggleAddCardModalWindow, addCard, boardId }) => {
+export const CardModal: FC<Props> = ({
+    toggleAddCardModalWindow,
+    addCard,
+    boardId,
+    defaultCard,
+}) => {
     const [card, setCardData] = useState({
         name: '',
         body: '',
         owner: 'lesha',
         id: Math.floor(Math.random() * 100000),
     })
+    useEffect(() => {
+        if (defaultCard.id) {
+            setCardData(defaultCard)
+        }
+    }, [])
 
     return (
         <div className="add-card-modal-content">
