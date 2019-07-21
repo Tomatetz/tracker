@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  font-family: 'Roboto';
+  src: local('Roboto'), url(./.fonts/Roboto.ttf) format('truetype');
 }
 .App-header {
   background-color: #282c34;
