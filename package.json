@@ -19,7 +19,7 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "lint": "tslint 'src/**/*.{ts,tsx,scss}'"
+        "lint": "tslint 'src/**/*.{ts,tsx}'"
     },
     "eslintConfig": {
         "extends": "react-app"
@@ -32,7 +32,7 @@
         "prettier": "^1.18.2",
         "tslint": "^5.18.0",
         "tslint-config-prettier": "^1.18.0",
-        "tslint-config-standard": "^8.0.1",
+        "tslint-plugin-prettier": "^2.0.1",
         "tslint-react": "^4.0.0"
     }
 }

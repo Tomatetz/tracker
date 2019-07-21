@@ -8,6 +8,7 @@ import './Content.scss'
 
 import React, { Component } from 'react'
 
+import { Board } from '../../model'
 import { BoardComponent } from '../BoardComponent'
 import { ContentConsumer } from '../AppContext/AppProvider'
 
@@ -20,8 +21,8 @@ export class Content extends Component<Props> {
                 <ContentConsumer>
                     {({ boards }) => (
                         <>
-                            {boards.map(board => (
-                                <BoardComponent key={board.id} board={board} />
+                            {boards.map((board: Board) => (
+                                <BoardComponent key={board.id.toString()} board={board} />
                             ))}
                         </>
                     )}

@@ -6,16 +6,16 @@
 
 import './CardModal.scss'
 
+import { BoardId, CardModel } from '../../model'
 import React, { FC, useContext, useState } from 'react'
 
 import { Context } from '../AppContext/AppProvider'
-import { Task } from '../../model'
 import avatarLesha from '../static/avatar.jpg'
 import avatarLiza from '../static/avatar-liza.jpg'
 
 interface Props {
-    readonly defaultCard: Task
-    readonly boardId: string
+    readonly defaultCard: CardModel
+    readonly boardId: BoardId
     readonly toggleShowCardModalWindow: (_: boolean) => void
 }
 export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defaultCard }) => {
@@ -24,7 +24,7 @@ export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defau
 
     return (
         <div className="add-card-modal-content">
-            <div className="basic-element">
+            <section className="basic-element">
                 <label>Name</label>
                 <input
                     className="input-basic"
@@ -32,16 +32,16 @@ export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defau
                     value={card.name}
                     onChange={e => setCardData({ ...card, name: e.currentTarget.value })}
                 />
-            </div>
-            <div className="basic-element">
+            </section>
+            <section className="basic-element">
                 <label>Description</label>
-                <input
-                    className="input-basic"
+                <textarea
+                    className="textarea-basic"
                     value={card.body}
                     onChange={e => setCardData({ ...card, body: e.currentTarget.value })}
                 />
-            </div>
-            <div className="basic-element">
+            </section>
+            <section className="basic-element">
                 <label>Owner</label>
                 <div>
                     <img
@@ -57,7 +57,7 @@ export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defau
                         onClick={_ => setCardData({ ...card, owner: 'liza' })}
                     />
                 </div>
-            </div>
+            </section>
             <footer className="footer-basic">
                 <button className="button-basic" onClick={_ => toggleShowCardModalWindow(false)}>
                     Cancel

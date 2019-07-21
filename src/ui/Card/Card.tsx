@@ -6,18 +6,19 @@
 
 import './Card.scss'
 
+import { BoardId, CardModel } from '../../model'
 import React, { FC, useContext } from 'react'
 
 import { Context } from '../AppContext/AppProvider'
-import { ReactComponent as EditIcon } from '../static/edit2.svg'
-import { Task } from '../../model'
+import { ReactComponent as DeleteIcon } from '../static/delete-button.svg'
+import { ReactComponent as EditIcon } from '../static/edit.svg'
 import avatarLesha from '../static/avatar.jpg'
 import avatarLiza from '../static/avatar-liza.jpg'
 
 interface Props {
-    readonly task: Task
-    readonly boardId: string
-    readonly showEditCardModal: (card: Task) => void
+    readonly task: CardModel
+    readonly boardId: BoardId
+    readonly showEditCardModal: (card: CardModel) => void
 }
 
 export const Card: FC<Props> = ({ task, boardId, showEditCardModal }) => {
@@ -29,23 +30,34 @@ export const Card: FC<Props> = ({ task, boardId, showEditCardModal }) => {
             className={'card' + (task.owner === 'lesha' ? ' owner-lesha' : ' owner-liza')}
             onDragStart={_ => updateDraggedCard(boardId, task)}
         >
-            <header className="card-header">
+            <section className="card-header">
                 <img
                     className="owner-image"
                     src={task.owner === 'lesha' ? avatarLesha : avatarLiza}
                     alt="avatar"
                 />
-                <div className="card-header__navigation">
-                    <div className="edit-card" onClick={_ => showEditCardModal(task)}>
+                <aside className="card-header__navigation">
+                    <div
+                        className="card-header__navigation-icon edit-card"
+                        onClick={_ => showEditCardModal(task)}
+                    >
                         <EditIcon />
                     </div>
-                    <div className="delete-card" onClick={_ => deleteCard(boardId, task.id)}>
-                        ✕
+                    <div
+                        className="card-header__navigation-icon delete-card"
+                        onClick={_ => deleteCard(boardId, task.id)}
+                    >
+                        <DeleteIcon />
                     </div>
-                </div>
-            </header>
-            {task.name}
-            <article className="card-body">{task.body}</article>
+                </aside>
+            </section>
+            <header className="card-name">{task.name}</header>
+            <article className="card-body">
+                <div>{task.body}</div>
+            </article>
+            <footer>
+                last edited:<time>{task.lastEdited}</time>
+            </footer>
         </div>
     )
 }

@@ -34,6 +34,16 @@ label {
   font-size: 14px;
 }
 
+.textarea-basic {
+  border: none;
+  outline: none;
+  padding: 4px;
+  border-radius: 2px;
+  font-size: 14px;
+  resize: none;
+  height: auto;
+}
+
 .button-basic {
   min-height: 21px;
   padding: 8px;

@@ -6,15 +6,28 @@
 
 /* tslint:disable: max-classes-per-file */
 
-export interface Task {
+export interface CardModel {
     id: number
     name: string
     body: string
     owner: string
+    lastEdited: CombinedDateAndTime
 }
 
 export interface Board {
-    id: string
+    id: BoardId
     name: string
-    tasks: Task[]
+    tasks: CardModel[]
+}
+
+export class CombinedDateAndTime extends String {
+    constructor(s: string) {
+        super(s)
+    }
+}
+
+export class BoardId extends String {
+    constructor(s: string) {
+        super(s)
+    }
 }

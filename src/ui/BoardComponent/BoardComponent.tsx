@@ -6,7 +6,7 @@
 
 import './BoardComponent.scss'
 
-import { Board, Task } from '../../model'
+import { Board, CardModel } from '../../model'
 import React, { FC, useContext, useState } from 'react'
 
 import { Card } from '../Card/Card'
@@ -20,15 +20,16 @@ interface Props {
 
 export const BoardComponent: FC<Props> = ({ board }) => {
     const [showCardModalWindow, toggleShowCardModalWindow] = useState(false)
-    const [editedCard, setEditedCardValue] = useState({} as Task)
-    const showEditCardModal = (editedCard: Task) => {
-        setEditedCardValue(editedCard)
+    const [editedCard, setEditedCardValue] = useState({} as CardModel)
+    const showEditCardModal = (card: CardModel) => {
+        setEditedCardValue(card)
         toggleShowCardModalWindow(true)
     }
     const { reorderCards, saveCards } = useContext(Context)
+
     return (
         <>
-            <div className="board" key={board.id}>
+            <div className="board">
                 <header className="board-header">
                     <div className="board-name">{board.name}</div>
                     <div className="board-controls">
@@ -40,7 +41,7 @@ export const BoardComponent: FC<Props> = ({ board }) => {
                                     body: '',
                                     owner: 'lesha',
                                     id: Math.floor(Math.random() * 100000),
-                                } as Task)
+                                } as CardModel)
                                 toggleShowCardModalWindow(true)
                             }}
                         >
