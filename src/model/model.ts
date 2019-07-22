@@ -20,6 +20,17 @@ export interface Board {
     tasks: CardModel[]
 }
 
+export interface BoardCardInfo {
+    boardId: BoardId
+    card: CardModel
+}
+
+export interface DragNDropCongig {
+    boardId: BoardId
+    targetCardPosition: number
+    positionShift: 0 | 1
+}
+
 export class CombinedDateAndTime extends String {
     constructor(s: string) {
         super(s)

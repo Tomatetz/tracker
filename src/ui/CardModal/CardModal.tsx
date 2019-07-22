@@ -20,7 +20,7 @@ interface Props {
 }
 export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defaultCard }) => {
     const [card, setCardData] = useState(defaultCard)
-    const { saveUpdatedCard, addCard } = useContext(Context)
+    const { saveUpdatedCard, saveNewCard } = useContext(Context)
 
     return (
         <div className="add-card-modal-content">
@@ -67,7 +67,9 @@ export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defau
                     disabled={!card.name || !card.body}
                     onClick={_ => {
                         toggleShowCardModalWindow(false)
-                        defaultCard.name ? saveUpdatedCard(boardId, card) : addCard(boardId, card)
+                        defaultCard.name
+                            ? saveUpdatedCard(boardId, card)
+                            : saveNewCard(boardId, card)
                     }}
                 >
                     Submit

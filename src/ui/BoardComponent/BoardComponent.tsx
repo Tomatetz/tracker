@@ -25,7 +25,7 @@ export const BoardComponent: FC<Props> = ({ board }) => {
         setEditedCardValue(card)
         toggleShowCardModalWindow(true)
     }
-    const { reorderCards, saveCards } = useContext(Context)
+    const { saveCards, dragCard } = useContext(Context)
 
     return (
         <>
@@ -51,18 +51,32 @@ export const BoardComponent: FC<Props> = ({ board }) => {
                 </header>
                 <div
                     className="droppable"
-                    onDragOver={e => {
+                    onDrop={e => {
                         e.preventDefault()
-                        reorderCards(board.id)
+                        console.log('Card drop event')
+                        saveCards(board.id)
                     }}
-                    onDrop={_ => saveCards(board.id)}
                 >
-                    {board.tasks.map(task => (
+                    {board.tasks.length === 0 && (
+                        <div
+                            className="board-empty-state"
+                            onDragOver={e => {
+                                e.preventDefault()
+                                dragCard({
+                                    boardId: board.id,
+                                    targetCardPosition: 0,
+                                    positionShift: 0,
+                                })
+                            }}
+                        ></div>
+                    )}
+                    {board.tasks.map((card, i) => (
                         <Card
-                            key={task.id}
+                            key={card.id}
                             boardId={board.id}
-                            task={task}
+                            card={card}
                             showEditCardModal={showEditCardModal}
+                            position={i}
                         />
                     ))}
                 </div>

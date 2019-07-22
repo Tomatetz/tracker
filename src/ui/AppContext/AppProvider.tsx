@@ -6,19 +6,17 @@
 
 import * as firebase from 'firebase'
 
-import { Board, BoardId, CardModel, CombinedDateAndTime } from '../../model'
+import { Board, BoardId, CardModel, DragNDropCongig, BoardCardInfo } from '../../model'
 import React, { Component, createContext } from 'react'
+import { getDateTime } from '../../services/'
 
 type Props = {}
 
 const initialState = {
-    reorderCards: (_: BoardId) => {
-        return
-    },
     saveCards: (_: BoardId) => {
         return
     },
-    addCard: (boardId: BoardId, card: CardModel) => {
+    saveNewCard: (boardId: BoardId, card: CardModel) => {
         return
     },
     saveUpdatedCard: (boardId: BoardId, card: CardModel) => {
@@ -27,14 +25,17 @@ const initialState = {
     deleteCard: (boardId: BoardId, cardId: number) => {
         return
     },
-    updateDraggedCard: (boardId: BoardId, card: CardModel) => {
+    updateDraggedCardModel: (_: BoardCardInfo) => {
+        return
+    },
+    dragCard: (_: DragNDropCongig) => {
         return
     },
     boards: [] as Board[],
     draggedCard: {
         card: {} as CardModel,
         boardId: '' as BoardId,
-    },
+    } as BoardCardInfo,
 }
 type State = typeof initialState
 
@@ -47,12 +48,12 @@ export class ContentProvider extends Component<Props, State> {
         super(props)
         this.state = {
             ...initialState,
-            reorderCards: this.reorderCards,
             deleteCard: this.deleteCard,
-            addCard: this.addCard,
+            saveNewCard: this.saveNewCard,
             saveCards: this.saveCards,
-            updateDraggedCard: this.updateDraggedCard,
+            updateDraggedCardModel: this.updateDraggedCardModel,
             saveUpdatedCard: this.saveUpdatedCard,
+            dragCard: this.dragCard,
         }
     }
     public render() {
@@ -72,28 +73,12 @@ export class ContentProvider extends Component<Props, State> {
                 this.setState({ boards })
             })
     }
-    private getDateTime: () => CombinedDateAndTime = () => new Date().toLocaleString('ru')
-    private reorderCards = (boardOverId: BoardId) => {
-        const { boards } = this.state
-        const { card } = this.state.draggedCard
-        const newBoards: Board[] = [...boards]
-        newBoards.forEach((board: Board, i: number) => {
-            if (board.id === boardOverId) {
-                if (!board.tasks.some(item => item.id === card.id)) {
-                    board.tasks.push(card)
-                }
-            } else {
-                board.tasks = board.tasks.filter(value => value.id !== card.id)
-            }
-            if (i === newBoards.length - 1) {
-                this.setState({ boards: newBoards })
-            }
-        })
+    private updateDraggedCardModel = (draggedCard: BoardCardInfo) => {
+        this.setState({ draggedCard })
     }
     private saveCards = (boardId: BoardId) => {
         const { boardId: boardDropFromId, card } = this.state.draggedCard
         const { boards } = this.state
-
         if (boardId !== boardDropFromId) {
             const boardDropTo = JSON.parse(JSON.stringify(boards)).filter(
                 (board: Board) => board.id === boardId,
@@ -102,7 +87,7 @@ export class ContentProvider extends Component<Props, State> {
                 (board: Board) => board.id === boardDropFromId,
             )[0]
             boardDropTo.tasks = boardDropTo.tasks.map((task: CardModel) => {
-                return task.id === card.id ? { ...card, lastEdited: this.getDateTime() } : task
+                return task.id === card.id ? { ...card, lastEdited: getDateTime() } : task
             })
 
             const batch = firebase.firestore().collection('tasks')
@@ -127,10 +112,10 @@ export class ContentProvider extends Component<Props, State> {
             .doc(boardId.toString())
             .update(currentboard)
     }
-    private addCard = (boardId: BoardId, card: CardModel) => {
+    private saveNewCard = (boardId: BoardId, card: CardModel) => {
         const { boards } = this.state
 
-        card.lastEdited = this.getDateTime()
+        card.lastEdited = getDateTime()
         const currentboard = JSON.parse(JSON.stringify(boards)).filter(
             (board: Board) => board.id === boardId,
         )[0]
@@ -144,7 +129,7 @@ export class ContentProvider extends Component<Props, State> {
     private saveUpdatedCard = (boardId: BoardId, card: CardModel) => {
         const { boards } = this.state
 
-        card.lastEdited = this.getDateTime()
+        card.lastEdited = getDateTime()
         const currentboard = JSON.parse(JSON.stringify(boards)).filter(
             (board: Board) => board.id === boardId,
         )[0]
@@ -157,8 +142,25 @@ export class ContentProvider extends Component<Props, State> {
             .doc(boardId.toString())
             .update(currentboard)
     }
-    private updateDraggedCard = (boardId: BoardId, card: CardModel) => {
-        this.setState({ draggedCard: { boardId, card } })
+    private dragCard = (config: DragNDropCongig) => {
+        const { card } = this.state.draggedCard
+        const { boardId, targetCardPosition, positionShift } = config
+        const { boards } = this.state
+
+        const newBoards: Board[] = JSON.parse(JSON.stringify(boards))
+        newBoards.forEach((board: Board, i: number) => {
+            board.tasks = board.tasks.filter(value => value.id !== card.id)
+            if (board.id === boardId) {
+                if (!board.tasks.some(item => item.id === card.id)) {
+                    board.tasks.splice(targetCardPosition + positionShift, 0, card)
+                }
+            } else {
+                board.tasks = board.tasks.filter((value: CardModel) => value.id !== card.id)
+            }
+            if (i === newBoards.length - 1) {
+                this.setState({ boards: newBoards })
+            }
+        })
     }
 }
 export const ContentConsumer = Consumer
