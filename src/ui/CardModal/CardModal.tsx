@@ -68,8 +68,8 @@ export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defau
                     onClick={_ => {
                         toggleShowCardModalWindow(false)
                         defaultCard.name
-                            ? saveUpdatedCard(boardId, card)
-                            : saveNewCard(boardId, card)
+                            ? saveUpdatedCard({ boardId, card })
+                            : saveNewCard({ boardId, card })
                     }}
                 >
                     Submit

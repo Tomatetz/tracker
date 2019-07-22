@@ -17,10 +17,10 @@ const initialState = {
     saveCards: (_: BoardId) => {
         return
     },
-    saveNewCard: (boardId: BoardId, card: CardModel) => {
+    saveNewCard: (_: BoardCardInfo) => {
         return
     },
-    saveUpdatedCard: (boardId: BoardId, card: CardModel) => {
+    saveUpdatedCard: (_: BoardCardInfo) => {
         return
     },
     deleteCard: (_: BoardCardInfo) => {
@@ -74,65 +74,12 @@ export class ContentProvider extends Component<Props, State> {
                 this.setState({ boards })
             })
     }
+
+    /*
+     *  Drag-n-drop logic
+     */
     private updateDraggedCardModel = (draggedCard: BoardCardInfo) => {
         this.setState({ draggedCard })
-    }
-    private saveCards = (boardId: BoardId) => {
-        const { boardId: boardDropFromId, card } = this.state.draggedCard
-        const { boards } = this.state
-        if (boardId !== boardDropFromId) {
-            const boardCopy = boardsDeepCopy(boards)
-            const boardDropTo = boardCopy.filter((board: Board) => board.id === boardId)[0]
-            const boardDropFrom = boardCopy.filter(
-                (board: Board) => board.id === boardDropFromId,
-            )[0]
-            boardDropTo.tasks = boardDropTo.tasks.map((task: CardModel) => {
-                return task.id === card.id ? { ...card, lastEdited: getDateTime() } : task
-            })
-
-            // Save to firebase
-            httpUpdateDocumentByBoardId(boardDropFromId, boardDropFrom).then(() => {
-                httpUpdateDocumentByBoardId(boardId, boardDropTo)
-            })
-        }
-    }
-    private deleteCard = (cardToDelete: BoardCardInfo) => {
-        const { boards } = this.state
-        const { boardId, card } = cardToDelete
-
-        const currentboard = boardsDeepCopy(boards).filter(
-            (board: Board) => board.id === boardId,
-        )[0]
-        currentboard.tasks = currentboard.tasks.filter((value: CardModel) => value.id !== card.id)
-
-        // Save to firebase
-        httpUpdateDocumentByBoardId(boardId, currentboard)
-    }
-    private saveNewCard = (boardId: BoardId, card: CardModel) => {
-        const { boards } = this.state
-
-        card.lastEdited = getDateTime()
-        const currentboard = boardsDeepCopy(boards).filter(
-            (board: Board) => board.id === boardId,
-        )[0]
-        currentboard.tasks.push(card)
-
-        // Save to firebase
-        httpUpdateDocumentByBoardId(boardId, currentboard)
-    }
-    private saveUpdatedCard = (boardId: BoardId, card: CardModel) => {
-        const { boards } = this.state
-
-        card.lastEdited = getDateTime()
-        const currentboard = boardsDeepCopy(boards).filter(
-            (board: Board) => board.id === boardId,
-        )[0]
-        currentboard.tasks = currentboard.tasks.map((task: CardModel) => {
-            return task.id === card.id ? card : task
-        })
-
-        // Save to firebase
-        httpUpdateDocumentByBoardId(boardId, currentboard)
     }
     private dragCard = (config: DragNDropCongig) => {
         const { card } = this.state.draggedCard
@@ -153,6 +100,73 @@ export class ContentProvider extends Component<Props, State> {
                 this.setState({ boards: newBoards })
             }
         })
+    }
+
+    /*
+     *  Update database functions
+     */
+    private saveCards = (boardId: BoardId) => {
+        const { boardId: boardDropFromId, card } = this.state.draggedCard
+        const { boards } = this.state
+        const boardCopy = boardsDeepCopy(boards)
+        const boardDropTo = boardCopy.filter((board: Board) => board.id === boardId)[0]
+        boardDropTo.tasks = boardDropTo.tasks.map((task: CardModel) => {
+            return task.id === card.id ? { ...card, lastEdited: getDateTime() } : task
+        })
+
+        if (boardId !== boardDropFromId) {
+            const boardDropFrom = boardCopy.filter(
+                (board: Board) => board.id === boardDropFromId,
+            )[0]
+
+            // Save to firebase
+            httpUpdateDocumentByBoardId(boardDropFromId, boardDropFrom).then(() => {
+                httpUpdateDocumentByBoardId(boardId, boardDropTo)
+            })
+        } else {
+            // Save to firebase
+            httpUpdateDocumentByBoardId(boardId, boardDropTo)
+        }
+    }
+    private deleteCard = (cardToDelete: BoardCardInfo) => {
+        const { boards } = this.state
+        const { boardId, card } = cardToDelete
+
+        const currentboard = boardsDeepCopy(boards).filter(
+            (board: Board) => board.id === boardId,
+        )[0]
+        currentboard.tasks = currentboard.tasks.filter((value: CardModel) => value.id !== card.id)
+
+        // Save to firebase
+        httpUpdateDocumentByBoardId(boardId, currentboard)
+    }
+    private saveNewCard = (cardToSave: BoardCardInfo) => {
+        const { boards } = this.state
+        const { boardId, card } = cardToSave
+
+        card.lastEdited = getDateTime()
+        const currentboard = boardsDeepCopy(boards).filter(
+            (board: Board) => board.id === boardId,
+        )[0]
+        currentboard.tasks.push(card)
+
+        // Save to firebase
+        httpUpdateDocumentByBoardId(boardId, currentboard)
+    }
+    private saveUpdatedCard = (cardToUpdate: BoardCardInfo) => {
+        const { boards } = this.state
+        const { boardId, card } = cardToUpdate
+
+        card.lastEdited = getDateTime()
+        const currentboard = boardsDeepCopy(boards).filter(
+            (board: Board) => board.id === boardId,
+        )[0]
+        currentboard.tasks = currentboard.tasks.map((task: CardModel) => {
+            return task.id === card.id ? card : task
+        })
+
+        // Save to firebase
+        httpUpdateDocumentByBoardId(boardId, currentboard)
     }
 }
 export const ContentConsumer = Consumer
