@@ -25,22 +25,42 @@
         min-height: 100px;
         position: relative;
 
-        .owner-image {
-            margin: 10px;
-            width: 50px;
-            cursor: pointer;
-            border-radius: 50%;
-            transition: filter 500ms;
-            filter: grayscale(100%);
+        .owner-radio {
+            display: flex;
+            width: 100%;
+            
+            .owner-button {
+                filter: grayscale(100%);
+                box-sizing: border-box;
+                cursor: pointer;
+                transition: filter 500ms;
+                width: 50%;
+                text-align: left;
+                padding: 5px 10px;
+                height: 50px;
+                line-height: 50px;
+                background-color: #eee;
+                color: black;
+                display: flex;
+                align-items:center;
+                font-size:15px;
+    
+                &:hover {
+                    box-sizing: border-box;
+                    filter: grayscale(80%);
+                }
+                &.selected {
+                    border: 1px solid #049ce4;
+                    background-color: #fff;
+                    filter: grayscale(0%);
+                    color: #049ce4;
+                }
 
-            &:hover {
-                box-sizing: border-box;
-                filter: grayscale(80%);
-            }
-            &.selected {
-                box-sizing: border-box;
-                border: 1px solid #f80;
-                filter: grayscale(0%);
+                .owner-image {
+                    height: 100%;
+                    border-radius: 50%;
+                    margin-right: 10px;
+                }
             }
         }
     }

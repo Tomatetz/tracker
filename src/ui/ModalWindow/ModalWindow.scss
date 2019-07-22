@@ -18,13 +18,13 @@
 
     .modal-window-body {
         background-color: #ddd;
-        width: 365px;
+        width: 250px;
         height: auto;
         margin: auto;
         top: 220px;
-        // top: calc(50% - 300px);
         min-height: 100px;
         position: relative;
-        padding: 8px 0;
+        padding: 20px;
+        border-radius: 5px;
     }
 }

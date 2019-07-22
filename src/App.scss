@@ -13,7 +13,7 @@
 .basic-element {
   display: flex;
   flex-direction: column;
-  padding: 8px;
+  padding: 12px 0;
 }
 
 label {
@@ -21,15 +21,22 @@ label {
   font-size: 14px;
   text-align: left;
   margin-bottom: 4px;
+  font-weight: 500;
 }
 
 .input-basic {
   border: none;
-  height: 21px;
+  height: 30px;
+  line-height: 30px;
   outline: none;
   padding: 4px;
   border-radius: 2px;
   font-size: 14px;
+  box-sizing: border-box;
+
+  &:focus {
+    border: 1px solid #049ce4;
+  }
 }
 
 .textarea-basic {
@@ -40,6 +47,12 @@ label {
   font-size: 14px;
   resize: none;
   height: auto;
+  min-height: 100px;
+  box-sizing: border-box;
+
+  &:focus {
+    border: 1px solid #049ce4;
+  }
 }
 
 .button-basic {
@@ -63,9 +76,10 @@ label {
   padding: 8px;
   font-size: 12px;
   border: none;
-  margin-left: 8px;
+  margin-left: 15px;
   border-radius: 2px;
   background-color: #7fcc7f;
+  color: #fff;
   &:not(:disabled) {
     cursor:pointer;
   }
@@ -83,7 +97,7 @@ label {
 .footer-basic {
   display: flex;
   justify-content: flex-end;
-  padding: 8px;
+  margin-top: 10px;
 }
 
 ul {

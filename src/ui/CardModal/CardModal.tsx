@@ -44,18 +44,22 @@ export const CardModal: FC<Props> = ({ toggleShowCardModalWindow, boardId, defau
             <section className="basic-element">
                 <label>Owner</label>
                 <div>
-                    <img
-                        className={`owner-image ${card.owner === 'lesha' ? ' selected' : ''}`}
-                        src={avatarLesha}
-                        alt=""
-                        onClick={_ => setCardData({ ...card, owner: 'lesha' })}
-                    />
-                    <img
-                        className={'owner-image' + (card.owner === 'liza' ? ' selected' : '')}
-                        src={avatarLiza}
-                        alt=""
-                        onClick={_ => setCardData({ ...card, owner: 'liza' })}
-                    />
+                    <div className="owner-radio">
+                        <div
+                            className={`owner-button ${card.owner === 'lesha' ? ' selected' : ''}`}
+                            onClick={_ => setCardData({ ...card, owner: 'lesha' })}
+                        >
+                            <img className="owner-image" src={avatarLesha} alt="" />
+                            Lesha
+                        </div>
+                        <div
+                            className={`owner-button ${card.owner === 'liza' ? ' selected' : ''}`}
+                            onClick={_ => setCardData({ ...card, owner: 'liza' })}
+                        >
+                            <img className="owner-image" src={avatarLiza} alt="" />
+                            Liza
+                        </div>
+                    </div>
                 </div>
             </section>
             <footer className="footer-basic">
