@@ -8,7 +8,8 @@ import * as firebase from 'firebase'
 
 import { Board, BoardId, CardModel, DragNDropCongig, BoardCardInfo } from '../../model'
 import React, { Component, createContext } from 'react'
-import { getDateTime } from '../../services/'
+import { getDateTime, boardsDeepCopy } from '../../services/'
+import { httpUpdateDocumentByBoardId } from '../../adapters/'
 
 type Props = {}
 
@@ -22,7 +23,7 @@ const initialState = {
     saveUpdatedCard: (boardId: BoardId, card: CardModel) => {
         return
     },
-    deleteCard: (boardId: BoardId, cardId: number) => {
+    deleteCard: (_: BoardCardInfo) => {
         return
     },
     updateDraggedCardModel: (_: BoardCardInfo) => {
@@ -80,74 +81,65 @@ export class ContentProvider extends Component<Props, State> {
         const { boardId: boardDropFromId, card } = this.state.draggedCard
         const { boards } = this.state
         if (boardId !== boardDropFromId) {
-            const boardDropTo = JSON.parse(JSON.stringify(boards)).filter(
-                (board: Board) => board.id === boardId,
-            )[0]
-            const boardDropFrom = JSON.parse(JSON.stringify(boards)).filter(
+            const boardCopy = boardsDeepCopy(boards)
+            const boardDropTo = boardCopy.filter((board: Board) => board.id === boardId)[0]
+            const boardDropFrom = boardCopy.filter(
                 (board: Board) => board.id === boardDropFromId,
             )[0]
             boardDropTo.tasks = boardDropTo.tasks.map((task: CardModel) => {
                 return task.id === card.id ? { ...card, lastEdited: getDateTime() } : task
             })
 
-            const batch = firebase.firestore().collection('tasks')
-            batch
-                .doc(boardDropFromId.toString())
-                .update(boardDropFrom)
-                .then(() => {
-                    batch.doc(boardId.toString()).update(boardDropTo)
-                })
+            // Save to firebase
+            httpUpdateDocumentByBoardId(boardDropFromId, boardDropFrom).then(() => {
+                httpUpdateDocumentByBoardId(boardId, boardDropTo)
+            })
         }
     }
-    private deleteCard = (boardId: BoardId, cardId: number) => {
+    private deleteCard = (cardToDelete: BoardCardInfo) => {
         const { boards } = this.state
-        const currentboard = JSON.parse(JSON.stringify(boards)).filter(
+        const { boardId, card } = cardToDelete
+
+        const currentboard = boardsDeepCopy(boards).filter(
             (board: Board) => board.id === boardId,
         )[0]
-        currentboard.tasks = currentboard.tasks.filter((value: CardModel) => value.id !== cardId)
+        currentboard.tasks = currentboard.tasks.filter((value: CardModel) => value.id !== card.id)
 
-        firebase
-            .firestore()
-            .collection('tasks')
-            .doc(boardId.toString())
-            .update(currentboard)
+        // Save to firebase
+        httpUpdateDocumentByBoardId(boardId, currentboard)
     }
     private saveNewCard = (boardId: BoardId, card: CardModel) => {
         const { boards } = this.state
 
         card.lastEdited = getDateTime()
-        const currentboard = JSON.parse(JSON.stringify(boards)).filter(
+        const currentboard = boardsDeepCopy(boards).filter(
             (board: Board) => board.id === boardId,
         )[0]
         currentboard.tasks.push(card)
-        firebase
-            .firestore()
-            .collection('tasks')
-            .doc(boardId.toString())
-            .update(currentboard)
+
+        // Save to firebase
+        httpUpdateDocumentByBoardId(boardId, currentboard)
     }
     private saveUpdatedCard = (boardId: BoardId, card: CardModel) => {
         const { boards } = this.state
 
         card.lastEdited = getDateTime()
-        const currentboard = JSON.parse(JSON.stringify(boards)).filter(
+        const currentboard = boardsDeepCopy(boards).filter(
             (board: Board) => board.id === boardId,
         )[0]
         currentboard.tasks = currentboard.tasks.map((task: CardModel) => {
             return task.id === card.id ? card : task
         })
-        firebase
-            .firestore()
-            .collection('tasks')
-            .doc(boardId.toString())
-            .update(currentboard)
+
+        // Save to firebase
+        httpUpdateDocumentByBoardId(boardId, currentboard)
     }
     private dragCard = (config: DragNDropCongig) => {
         const { card } = this.state.draggedCard
         const { boardId, targetCardPosition, positionShift } = config
         const { boards } = this.state
 
-        const newBoards: Board[] = JSON.parse(JSON.stringify(boards))
+        const newBoards: Board[] = boardsDeepCopy(boards)
         newBoards.forEach((board: Board, i: number) => {
             board.tasks = board.tasks.filter(value => value.id !== card.id)
             if (board.id === boardId) {

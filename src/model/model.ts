@@ -6,18 +6,24 @@
 
 /* tslint:disable: max-classes-per-file */
 
+export interface Board {
+    id: BoardId
+    name: string
+    tasks: CardModel[]
+}
+
+export class BoardId extends String {
+    constructor(s: string) {
+        super(s)
+    }
+}
+
 export interface CardModel {
     id: number
     name: string
     body: string
     owner: string
     lastEdited: CombinedDateAndTime
-}
-
-export interface Board {
-    id: BoardId
-    name: string
-    tasks: CardModel[]
 }
 
 export interface BoardCardInfo {
@@ -32,12 +38,6 @@ export interface DragNDropCongig {
 }
 
 export class CombinedDateAndTime extends String {
-    constructor(s: string) {
-        super(s)
-    }
-}
-
-export class BoardId extends String {
     constructor(s: string) {
         super(s)
     }

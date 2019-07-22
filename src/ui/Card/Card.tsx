@@ -52,7 +52,7 @@ export const Card: FC<Props> = ({ card, boardId, position, showEditCardModal }) 
                         </div>
                         <div
                             className="card-header__navigation-icon delete-card"
-                            onClick={_ => deleteCard(boardId, card.id)}
+                            onClick={_ => deleteCard({ boardId, card })}
                         >
                             <DeleteIcon />
                         </div>
