@@ -16,7 +16,7 @@ export const ModalComponent: SFC<Props> = ({ children, extraClass }) => {
     return (
         <div className="modal-window">
             <div className="modal-window-background" />
-            <div className={extraClass || '' + ' modal-window-body'}>{children}</div>
+            <div className={`${extraClass || ''} modal-window-body`}>{children}</div>
         </div>
     )
 }
