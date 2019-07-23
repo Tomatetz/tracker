@@ -12,11 +12,10 @@
         "react": "^16.8.6",
         "react-dom": "^16.8.6",
         "react-scripts": "3.0.1",
-        "serve": "^11.1.0",
         "typescript": "3.5.3"
     },
     "scripts": {
-        "dev": "react-scripts start",
+        "start:dev": "react-scripts start",
         "start": "serve -s build",
         "build": "react-scripts build",
         "test": "react-scripts test",
@@ -28,16 +27,8 @@
         "extends": "react-app"
     },
     "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
+        "production": [">0.2%", "not dead", "not op_mini all"],
+        "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
     },
     "devDependencies": {
         "prettier": "^1.18.2",
