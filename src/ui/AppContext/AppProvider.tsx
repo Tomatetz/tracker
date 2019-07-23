@@ -87,7 +87,7 @@ export class ContentProvider extends Component<Props, State> {
         const { boardId, targetCardPosition, positionShift } = config
         const { boards } = this.state
 
-        const newBoards: Board[] = deepArrayCopy<Board>(boards)
+        const newBoards: Board[] = deepArrayCopy<Board[]>(boards)
         newBoards.forEach((board: Board, i: number) => {
             board.tasks = board.tasks.filter(value => value.id !== card.id)
             if (board.id === boardId) {
@@ -109,7 +109,7 @@ export class ContentProvider extends Component<Props, State> {
     private saveCards = (boardId: BoardId) => {
         const { boardId: boardDropFromId, card } = this.state.draggedCard
         const { boards } = this.state
-        const boardCopy = deepArrayCopy<Board>(boards)
+        const boardCopy = deepArrayCopy<Board[]>(boards)
         const boardDropTo = boardCopy.filter((board: Board) => board.id === boardId)[0]
         boardDropTo.tasks = boardDropTo.tasks.map((task: CardModel) => {
             return task.id === card.id ? { ...card, lastEdited: getDateTime() } : task
@@ -133,7 +133,7 @@ export class ContentProvider extends Component<Props, State> {
         const { boards } = this.state
         const { boardId, card } = cardToDelete
 
-        const currentboard = deepArrayCopy<Board>(boards).filter(
+        const currentboard = deepArrayCopy<Board[]>(boards).filter(
             (board: Board) => board.id === boardId,
         )[0]
         currentboard.tasks = currentboard.tasks.filter((value: CardModel) => value.id !== card.id)
@@ -146,7 +146,7 @@ export class ContentProvider extends Component<Props, State> {
         const { boardId, card } = cardToSave
 
         card.lastEdited = getDateTime()
-        const currentboard = deepArrayCopy<Board>(boards).filter(
+        const currentboard = deepArrayCopy<Board[]>(boards).filter(
             (board: Board) => board.id === boardId,
         )[0]
         currentboard.tasks.push(card)
@@ -159,7 +159,7 @@ export class ContentProvider extends Component<Props, State> {
         const { boardId, card } = cardToUpdate
 
         card.lastEdited = getDateTime()
-        const currentboard = deepArrayCopy<Board>(boards).filter(
+        const currentboard = deepArrayCopy<Board[]>(boards).filter(
             (board: Board) => board.id === boardId,
         )[0]
         currentboard.tasks = currentboard.tasks.map((task: CardModel) => {
