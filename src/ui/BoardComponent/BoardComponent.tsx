@@ -9,7 +9,7 @@ import './BoardComponent.scss'
 import { Board, CardModel } from '../../model'
 import React, { FC, useContext, useState } from 'react'
 
-import { Card } from '../Card/Card'
+import { Card, CardMemoized } from '../Card/Card'
 import { CardModal } from '../CardModal'
 import { Context } from '../AppContext/AppProvider'
 import { ModalComponent } from '../ModalWindow'
@@ -71,13 +71,20 @@ export const BoardComponent: FC<Props> = ({ board }) => {
                         ></div>
                     )}
                     {board.tasks.map((card, i) => (
-                        <Card
+                        <CardMemoized
                             key={card.id}
                             boardId={board.id}
                             card={card}
                             showEditCardModal={showEditCardModal}
                             position={i}
-                        />
+                        ></CardMemoized>
+                        // <Card
+                        //     key={card.id}
+                        //     boardId={board.id}
+                        //     card={card}
+                        //     showEditCardModal={showEditCardModal}
+                        //     position={i}
+                        // />
                     ))}
                 </div>
             </div>

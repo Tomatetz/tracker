@@ -7,7 +7,7 @@
 import './Card.scss'
 
 import { BoardId, CardModel } from '../../model'
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, memo } from 'react'
 
 import { Context } from '../AppContext/AppProvider'
 import { ReactComponent as DeleteIcon } from '../static/delete-button.svg'
@@ -76,3 +76,5 @@ export const Card: FC<Props> = ({ card, boardId, position, showEditCardModal }) 
         </div>
     )
 }
+
+export const CardMemoized = memo(Card)
