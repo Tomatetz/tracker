@@ -65,9 +65,13 @@ export class ContentProvider extends Component<Props, State> {
         firebase
             .firestore()
             .collection('tasks')
+            .doc('boards')
             .onSnapshot(snap => {
-                const boards: Board[] = snap.docs[0].data().boards
-                this.setState({ boards })
+                const data = snap.data()
+                if (data) {
+                    const { boards } = data
+                    this.setState({ boards })
+                }
             })
     }
 
@@ -77,6 +81,7 @@ export class ContentProvider extends Component<Props, State> {
     private updateDraggedCardModel = (draggedCard: BoardCardInfo) => {
         this.setState({ draggedCard })
     }
+
     private dragCard = (config: DragNDropCongig) => {
         const { card } = this.state.draggedCard
         const { boardId, targetCardPosition, positionShift } = config
