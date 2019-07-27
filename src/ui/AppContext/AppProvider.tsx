@@ -10,12 +10,12 @@ import { Board, BoardCardInfo, BoardId, CardModel, DragNDropCongig } from '../..
 import React, { Component, createContext } from 'react'
 import { deepArrayCopy, getDateTime } from '../../services/'
 
-import { httpUpdateDocumentByBoardId } from '../../adapters/'
+import { httpUpdateDataId } from '../../adapters/'
 
 type Props = {}
 
 const initialState = {
-    saveCards: (_: BoardId) => {
+    saveCards: () => {
         return
     },
     saveNewCard: (_: BoardCardInfo) => {
@@ -66,12 +66,7 @@ export class ContentProvider extends Component<Props, State> {
             .firestore()
             .collection('tasks')
             .onSnapshot(snap => {
-                const boards: Board[] = []
-                snap.docs.forEach((doc, i) => {
-                    const data = doc.data()
-                    data.id = doc.id
-                    boards.push(data as Board)
-                })
+                const boards: Board[] = snap.docs[0].data().boards
                 this.setState({ boards })
             })
     }
@@ -106,68 +101,68 @@ export class ContentProvider extends Component<Props, State> {
     /*
      *  Update database functions
      */
-    private saveCards = (boardId: BoardId) => {
-        const { boardId: boardDropFromId, card } = this.state.draggedCard
-        const { boards } = this.state
-        const boardCopy = deepArrayCopy<Board[]>(boards)
-        const boardDropTo = boardCopy.filter((board: Board) => board.id === boardId)[0]
-        boardDropTo.tasks = boardDropTo.tasks.map((task: CardModel) => {
-            return task.id === card.id ? { ...card, lastEdited: getDateTime() } : task
-        })
-
-        if (boardId !== boardDropFromId) {
-            const boardDropFrom = boardCopy.filter(
-                (board: Board) => board.id === boardDropFromId,
-            )[0]
-
-            // Save to firebase
-            httpUpdateDocumentByBoardId(boardDropFromId, boardDropFrom).then(() => {
-                httpUpdateDocumentByBoardId(boardId, boardDropTo)
-            })
-        } else {
-            // Save to firebase
-            httpUpdateDocumentByBoardId(boardId, boardDropTo)
-        }
+    private saveCards = () => {
+        httpUpdateDataId(this.state.boards)
     }
+
     private deleteCard = (cardToDelete: BoardCardInfo) => {
         const { boards } = this.state
         const { boardId, card } = cardToDelete
 
-        const currentboard = deepArrayCopy<Board[]>(boards).filter(
-            (board: Board) => board.id === boardId,
-        )[0]
-        currentboard.tasks = currentboard.tasks.filter((value: CardModel) => value.id !== card.id)
+        const boardsCopy = deepArrayCopy<Board[]>(boards)
 
-        // Save to firebase
-        httpUpdateDocumentByBoardId(boardId, currentboard)
+        for (let board of boardsCopy) {
+            if (board.id === boardId) {
+                board.tasks = board.tasks.filter(task => task.id !== card.id)
+
+                // Save to firebase
+                httpUpdateDataId(this.state.boards)
+                return
+            }
+        }
     }
+
     private saveNewCard = (cardToSave: BoardCardInfo) => {
         const { boards } = this.state
         const { boardId, card } = cardToSave
 
         card.lastEdited = getDateTime()
-        const currentboard = deepArrayCopy<Board[]>(boards).filter(
-            (board: Board) => board.id === boardId,
-        )[0]
-        currentboard.tasks.push(card)
 
-        // Save to firebase
-        httpUpdateDocumentByBoardId(boardId, currentboard)
+        const boardsCopy = deepArrayCopy<Board[]>(boards)
+        for (let board of boardsCopy) {
+            if (board.id === boardId) {
+                board.tasks.push(card)
+
+                // Save to firebase
+                httpUpdateDataId(this.state.boards)
+                return
+            }
+        }
     }
+
     private saveUpdatedCard = (cardToUpdate: BoardCardInfo) => {
         const { boards } = this.state
         const { boardId, card } = cardToUpdate
 
         card.lastEdited = getDateTime()
-        const currentboard = deepArrayCopy<Board[]>(boards).filter(
-            (board: Board) => board.id === boardId,
-        )[0]
-        currentboard.tasks = currentboard.tasks.map((task: CardModel) => {
-            return task.id === card.id ? card : task
-        })
 
-        // Save to firebase
-        httpUpdateDocumentByBoardId(boardId, currentboard)
+        const boardsCopy = deepArrayCopy<Board[]>(boards)
+        for (let board of boardsCopy) {
+            if (board.id === boardId) {
+                board.tasks = board.tasks.map(task => {
+                    if ((task.id = card.id)) {
+                        return { ...task, ...card }
+                    } else {
+                        return task
+                    }
+                })
+
+                // Save to firebase
+                httpUpdateDataId(boardsCopy)
+                return
+            }
+        }
     }
 }
+
 export const ContentConsumer = Consumer

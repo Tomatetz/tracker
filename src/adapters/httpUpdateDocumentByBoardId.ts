@@ -6,12 +6,14 @@
 
 import * as firebase from 'firebase'
 
-import { Board, BoardId } from '../model'
+import { Board } from '../model'
 
-export const httpUpdateDocumentByBoardId = (boardId: BoardId, board: Board) => {
+export const httpUpdateDataId = (boards: Board[]) => {
     return firebase
         .firestore()
         .collection('tasks')
-        .doc(boardId.toString())
-        .update(board)
+        .doc('boards')
+        .update({
+            boards,
+        })
 }

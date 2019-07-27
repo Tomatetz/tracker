@@ -9,7 +9,7 @@ import './BoardComponent.scss'
 import { Board, CardModel } from '../../model'
 import React, { FC, useContext, useState } from 'react'
 
-import { Card, CardMemoized } from '../Card/Card'
+import { CardMemoized } from '../Card/Card'
 import { CardModal } from '../CardModal'
 import { Context } from '../AppContext/AppProvider'
 import { ModalComponent } from '../ModalWindow'
@@ -54,7 +54,7 @@ export const BoardComponent: FC<Props> = ({ board }) => {
                     onDrop={e => {
                         e.preventDefault()
                         console.log('Card drop event')
-                        saveCards(board.id)
+                        saveCards()
                     }}
                 >
                     {board.tasks.length === 0 && (
@@ -78,13 +78,6 @@ export const BoardComponent: FC<Props> = ({ board }) => {
                             showEditCardModal={showEditCardModal}
                             position={i}
                         ></CardMemoized>
-                        // <Card
-                        //     key={card.id}
-                        //     boardId={board.id}
-                        //     card={card}
-                        //     showEditCardModal={showEditCardModal}
-                        //     position={i}
-                        // />
                     ))}
                 </div>
             </div>

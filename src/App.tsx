@@ -12,13 +12,13 @@ import React from 'react'
 import firebase from 'firebase'
 
 firebase.initializeApp({
-    apiKey: 'AIzaSyCzJpN2PpAgT1so97__GiymRMVzTmdtom8',
-    authDomain: 'tracker-f703d.firebaseapp.com',
-    databaseURL: 'https://tracker-f703d.firebaseio.com',
-    projectId: 'tracker-f703d',
-    storageBucket: '',
-    messagingSenderId: '608550862288',
-    appId: '1:608550862288:web:2c0b88ad7d99b3c3',
+    apiKey: process.env.REACT_APP_FIRABASE_KEY,
+    authDomain: process.env.REACT_APP_FIRABASE_DOMAIN,
+    databaseURL: process.env.REACT_APP_FIRABASE_URL,
+    projectId: process.env.REACT_APP_FIRABASE_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_FIRABASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_FIRABASE_SENDER_ID,
+    appId: process.env.REACT_APP_FIRABASE_APP_ID,
 })
 
 const App: React.FC = () => {
